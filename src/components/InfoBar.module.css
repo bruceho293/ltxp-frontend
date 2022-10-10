@@ -1,0 +1,62 @@
+.buttonLink {
+  display: block;
+  align-items: center;
+  padding: 2px;
+  border-radius: 2vmin;
+}
+
+.buttonLink:hover,
+.buttonLink:focus {
+  box-shadow: 0 0.5em 0.5em -0.4em var(--color-obj-hover);
+  transform: translateY(-0.25em);
+  cursor: pointer;
+}
+
+.container {
+  padding: 1vmax;
+  margin: 10px 5px 1vmin 5px;
+  color: var(--color-text-default);
+  background-color: var(--color-bkg-bar);
+  border-radius: 2vmin;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.costDiffer {
+  width: 25vmax;
+  text-align: left;
+}
+
+.positive {
+  color: #00c22b;
+}
+
+.negative {
+  color: #f00c0c;
+}
+
+.icon {
+  width: auto;
+  height: 3vmin;
+  min-height: 5px;
+}
+
+.icon:hover,
+.icon:focus {
+  background-color: #343333;
+  border: 1px solid;
+  border-radius: 10px;
+}
+
+.title {
+  width: 20vmax;
+  text-align: left;
+}
+
+.nums {
+  display: block;
+  text-align: left;
+}

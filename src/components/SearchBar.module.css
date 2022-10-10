@@ -1,0 +1,49 @@
+.form {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+  width: 70%;
+  height: calc(6vmin + 3px);
+  border-radius: calc(5vmin + 10px);
+}
+
+.form:focus-within {
+  border: 1.5px solid var(--color-bkg-btn);
+}
+
+.form input {
+  width: 70%;
+  height: 100%;
+  border-top-left-radius: calc(5vmin + 10px);
+  border-bottom-left-radius: calc(5vmin + 10px);
+  font-size: var(--text-size-default);
+  padding-left: 15px;
+  margin: 0;
+}
+
+.form input:focus {
+  outline: none;
+}
+
+.form button {
+  width: 30%;
+  height: 100%;
+  border-top-right-radius: calc(5vmin + 10px);
+  border-bottom-right-radius: calc(5vmin + 10px);
+  font-size: var(--text-size-default);
+  background-color: var(--color-bkg-btn);
+  color: var(--color-text-default);
+  margin: 0;
+  cursor: pointer;
+}
+
+.visualyHidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: baseline;
+  align-items: center;
+  gap: 1rem;
+}
+.buttonIcon {
+  width: auto;
+  height: 4vmin;
+  min-height: 6px;
+  color: var(--color-bkg-bar);
+}
+
+.buttonIcon:hover,
+:focus {
+  cursor: pointer;
+  color: #707627;
+}
+
+.positive {
+  color: #00c113;
+}
+
+.negative {
+  color: #e03b3b;
+}

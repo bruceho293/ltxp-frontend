@@ -1,0 +1,65 @@
+.container {
+  background-color: var(--color-bkg-container);
+  margin: 10px 0 20px 0;
+  padding: 10px 0 20px 0;
+  border: 1px solid var(--color-border-default);
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 10px;
+  width: 100%;
+}
+
+.section {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 90%;
+  gap: 5rem;
+  margin: 20px;
+}
+
+.settings {
+  display: grid;
+  grid-template-columns: [first] 20vw [second] 1vw [third] 1fr [fourth] 10vw;
+  grid-gap: 10px;
+  width: 60%;
+}
+
+.settings label {
+  grid-column-start: first;
+  grid-column-end: second;
+}
+
+.settings p {
+  width: 5px;
+  grid-column-start: second;
+  grid-column-end: third;
+}
+
+.settings input {
+  height: 5vh;
+  border-radius: 5px;
+  padding-left: 5px;
+  grid-column-start: third;
+  grid-column-end: end;
+  font-size: var(--text-size-default);
+}
+
+.settings button {
+  height: 5vh;
+  grid-column-start: fourth;
+  grid-column-end: end;
+  background-color: var(--color-bkg-btn);
+  border-radius: 10px;
+  color: var(--color-txt-default);
+}
+
+.imageIcon {
+  width: auto;
+  height: 10vmin;
+  min-height: 200px;
+}

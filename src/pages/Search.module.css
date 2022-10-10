@@ -1,0 +1,154 @@
+.title {
+  width: 70%;
+  margin: 3rem 0 3rem 0;
+  font-style: italic;
+}
+
+.container {
+  background-color: var(--color-bkg-container);
+  margin: 10px 0 20px 0;
+  padding: 10px 0 20px 0;
+  border: 1px solid var(--color-border-default);
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.section {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+
+.topbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.bar {
+  display: inline-block;
+  width: 100%;
+  height: 3px;
+  border: 1px solid var(--color-border-default);
+  background-color: var(--color-border-default);
+}
+
+.bottombar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.halfbar {
+  display: flex;
+  width: 50%;
+  max-height: 35vmin;
+  align-items: baseline;
+  gap: 0.3rem;
+  overflow-y: auto;
+}
+
+.searches {
+  flex-flow: row wrap;
+}
+
+.filters {
+  flex-flow: row-reverse wrap-reverse;
+}
+
+.filter {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.filterOptions {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  text-align: left;
+  border: 1px solid var(--color-border-default);
+  border-radius: 1rem;
+  padding: 10px;
+  margin: 5px;
+}
+
+.filterOption {
+  display: grid;
+  grid-template-columns: 40% 30% 30%;
+  width: 100%;
+}
+
+.filterValue {
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filterValue:hover,
+.filterValue:focus {
+  color: aqua;
+  background-color: var(--color-obj-hover);
+  border-radius: 5px;
+}
+
+.icon {
+  width: auto;
+  height: 2vmin;
+  min-height: 15px;
+}
+
+.toggleBtn {
+  height: max-content;
+  width: 15vmin;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggleBtn:hover,
+.toggleBtn:focus {
+  background-color: #343333;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.full {
+  height: 80vh;
+}
+
+.vanish {
+  display: none;
+}
+
+.chosen {
+  border: 2px solid var(--color-obj-hover);
+}
+
+@media (max-width: 700px) {
+  .filterOption {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-items: left;
+    width: 100%;
+  }
+
+  .filterOptions {
+    width: 60%;
+  }
+}
