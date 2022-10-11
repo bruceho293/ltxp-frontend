@@ -9,13 +9,15 @@ import {
 import styles from './Pagination.module.css'
 import classnames from 'classnames'
 
+export const PAGE_SIZE = 5
+
 export default function Pagination(props) {
   const {
     onPageChange,
     totalCount,
-    siblingCount = 1,
+    siblingCount = 3,
     currentPage,
-    pageSize,
+    pageSize = PAGE_SIZE,
     className,
   } = props
 

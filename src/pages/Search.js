@@ -4,12 +4,11 @@ import styles from './Search.module.css'
 import filterIcon from '../assets/images/filter.svg'
 import InfoBar from '../components/InfoBar'
 import { CreateRegexFromString } from '../util'
-import Pagination from '../components/Pagination'
+import Pagination, { PAGE_SIZE } from '../components/Pagination'
 import data from '../data/mock-laptop-data.json'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import classnames from 'classnames'
 
-const PageSize = 5
 const ASC_VALUE = 'asc'
 const DESC_VALUE = 'desc'
 
@@ -60,8 +59,8 @@ export default function Search() {
   const [filterShown, setFilterShown] = useState(false)
 
   const currentData = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * PageSize
-    const lastPageIndex = firstPageIndex + PageSize
+    const firstPageIndex = (currentPage - 1) * PAGE_SIZE
+    const lastPageIndex = firstPageIndex + PAGE_SIZE
     return laptops.slice(firstPageIndex, lastPageIndex)
   }, [currentPage, laptops])
 
@@ -272,8 +271,6 @@ export default function Search() {
             <Pagination
               currentPage={currentPage}
               totalCount={laptops.length}
-              siblingCount={3}
-              pageSize={PageSize}
               onPageChange={page => setCurrentPage(page)}
             />
           </div>
