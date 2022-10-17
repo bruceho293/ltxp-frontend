@@ -22,26 +22,22 @@ const filterJson = (fid, title, label, field) => {
 const filtersTemplate = [
   filterJson(1, 'Price', 'price', 'cost'),
   filterJson(2, 'Ext Comparison Price', 'extComparePrice', 'costDiff'),
-  filterJson(3, 'Last Update Day', 'LUD', 'update'),
+  filterJson(3, 'Last Update Day', 'LUD', 'updated'),
 ]
 
-const sortAsc = (arr, field) => {
-  return arr.sort((a, b) => {
-    if (arr[a] > arr[b]) return 1
-    if (arr[a] < arr[b]) return -1
+const sortHelper = (arr, filterSettings) => {
+  return arr.sort(function(a, b) {
+    for (let i = 0; i < filterSettings.length; i++) {
+      const sign = filterSettings[i].isAsc ? 1 : -1
+      const field = filterSettings[i].field
+      if (a[field] > b[field]) return sign
+      if (a[field] < b[field]) return -1 * sign
+    }
     return 0
   })
 }
 
-const sortDesc = (arr, field) => {
-  return arr.sort((a, b) => {
-    if (arr[a] > arr[b]) return -1
-    if (arr[a] < arr[b]) return 1
-    return 0
-  })
-}
-
-export const useItemList = ({ data }) => {
+export const useItemList = ({ data, isProfile }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [laptops, setLaptops] = useState([])
 
@@ -63,16 +59,24 @@ export const useItemList = ({ data }) => {
       result => new RegExp(CreateRegexFromString(result))
     )
 
-    const filteredData = data.filter(laptop =>
+    const searchData = data.filter(laptop =>
       searchRegexes.some(regex => regex.test(laptop.name.trim().toLowerCase()))
     )
 
+    const interestData = data.filter(laptop => laptop.imp !== 0)
+
+    let finalData = isProfile ? interestData : searchData
+
+    let activeFilters = []
     filters.forEach(filter => {
-      if (filter.active) {
-      }
+      if (filter.active) activeFilters.push(filter)
     })
 
-    setLaptops(filteredData)
+    console.log(activeFilters)
+
+    if (activeFilters.length > 0)
+      finalData = sortHelper(finalData, activeFilters)
+    setLaptops(finalData)
   }, [searches, filters])
 
   const updateLaptopImp = (laptopId, buttonPressed) => {

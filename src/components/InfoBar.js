@@ -43,7 +43,7 @@ export default function InfoBar({
 }
 
 function LaptopBar({ content, onImpChange }) {
-  const { id, name, cost, costDiff, likes, dislikes, imp, lud } = content
+  const { id, name, cost, costDiff, likes, dislikes, imp, updated } = content
   const costSign = costDiff >= 0 ? '+' : '-'
   const navigate = useNavigate()
   const handleClick = () => {
@@ -53,7 +53,7 @@ function LaptopBar({ content, onImpChange }) {
   return (
     <>
       <p className={styles.title}>{name}</p>
-      <p>LUD: {lud}</p>
+      <p>Updated: {updated}</p>
       <div className={styles.nums}>
         <p>Price: ${cost} </p>
         <p className={styles.costDiffer}>

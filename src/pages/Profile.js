@@ -2,8 +2,11 @@ import React from 'react'
 import styles from './Profile.module.css'
 import avatarHolder from '../assets/images/avatar.svg'
 import InforList from '../components/InfoList'
+import { useItemList } from '../hooks/useItemList'
+import data from '../data/mock-laptop-data.json'
 
 export default function Profile() {
+  const properties = useItemList({ data: data, isProfile: true })
   return (
     <>
       <div className={styles.container}>
@@ -44,7 +47,7 @@ export default function Profile() {
       </div>
       <div className={styles.container}>
         <h2>Your Interest</h2>
-        <InforList />
+        <InforList {...properties} />
       </div>
     </>
   )

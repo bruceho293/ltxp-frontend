@@ -1,18 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import styles from './InfoList.module.css'
 import filterIcon from '../assets/images/filter.svg'
 import InfoBar from '../components/InfoBar'
 
 import Pagination from '../components/Pagination'
-import data from '../data/mock-laptop-data.json'
-
 import classnames from 'classnames'
-import { useItemList } from '../hooks/useItemList'
 
 const ASC_VALUE = 'asc'
 const DESC_VALUE = 'desc'
 
-export default function InforList() {
+export default function InforList(props) {
   const {
     currentPage,
     currentData,
@@ -23,11 +20,10 @@ export default function InforList() {
     updateLaptopImp,
     setFilterShown,
     setCurrentPage,
-    addSearchResult,
     deleteSearchResult,
     addFilter,
     deleteFilter,
-  } = useItemList({ data: data })
+  } = props
 
   return (
     <div className={styles.container}>

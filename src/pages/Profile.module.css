@@ -1,3 +1,7 @@
+h2 {
+  margin-left: 0.5vw;
+}
+
 .container {
   background-color: var(--color-bkg-container);
   margin: 10px 0 20px 0;
@@ -15,7 +19,7 @@
 .section {
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: flex-start;
   width: 90%;
   gap: 5rem;
@@ -26,7 +30,7 @@
   display: grid;
   grid-template-columns: [first] 20vw [second] 1vw [third] 1fr [fourth] 10vw;
   grid-gap: 10px;
-  width: 60%;
+  width: 70%;
 }
 
 .settings label {
