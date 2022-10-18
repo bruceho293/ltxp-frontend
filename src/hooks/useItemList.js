@@ -72,8 +72,6 @@ export const useItemList = ({ data, isProfile }) => {
       if (filter.active) activeFilters.push(filter)
     })
 
-    console.log(activeFilters)
-
     if (activeFilters.length > 0)
       finalData = sortHelper(finalData, activeFilters)
     setLaptops(finalData)

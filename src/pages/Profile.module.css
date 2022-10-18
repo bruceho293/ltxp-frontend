@@ -67,3 +67,50 @@ h2 {
   height: 10vmin;
   min-height: 200px;
 }
+
+.imgContainer {
+  display: block;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.profile button {
+  background-color: var(--color-bkg-container);
+  color: var(--color-txt-default);
+  border: none;
+  font-size: small;
+}
+
+.profile button:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.profile button:after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--color-obj-hover);
+  transform: scaleX(0);
+  transform-origin: 0% 100%;
+  transition: transform 0.45s;
+}
+
+.profile button:hover:after {
+  transform: scaleX(1);
+}
+
+.avatarEditor {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
