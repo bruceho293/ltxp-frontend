@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './Profile.module.css'
 import avatarHolder from '../assets/images/avatar.svg'
 import { useItemList } from '../hooks/useItemList'
@@ -14,14 +14,36 @@ export default function Profile() {
   const [imgSrc, setImgSrc] = useState('')
   const [newImgSrc, setNewImgSrc] = useState('')
 
+  let timer
+  const INACTIVE_EDITOR_DURATION = 5 * 60 * 1000
+
+  useEffect(() => {
+    if (isAvatarEditor) {
+      if (!timer) {
+        timer = setInterval(() => {
+          setIsAvatarEditor(false)
+          clearInterval(timer)
+        }, INACTIVE_EDITOR_DURATION)
+      }
+    } else {
+      if (timer) clearInterval(timer)
+    }
+  }, [isAvatarEditor])
+
   const handleChange = e => {
     e.preventDefault()
     setNewImgSrc(e.target.files[0])
   }
 
   const handleClick = () => {
+    if (isAvatarEditor) clearInterval(timer)
     setIsAvatarEditor(!isAvatarEditor)
     setNewImgSrc('')
+  }
+
+  const handleScaleChange = e => {
+    const newScale = e.target.value
+    setAvatarScale(newScale)
   }
 
   return (
@@ -32,11 +54,7 @@ export default function Profile() {
           <div className={styles.profile}>
             <div className={styles.imgContainer}>
               {isAvatarEditor ? (
-                <div
-                  className={styles.avatarEditor}
-                  onFocus={() => setIsAvatarEditor(true)}
-                  onBlur={() => setIsAvatarEditor(false)}
-                >
+                <div className={styles.avatarEditor}>
                   <AvatarEditor
                     image={newImgSrc}
                     width={200}
@@ -50,6 +68,13 @@ export default function Profile() {
                     label="profile-image"
                     aria-label="Input button for upload image file"
                     onChange={handleChange}
+                  />
+                  <input
+                    type="range"
+                    value={avatarScale}
+                    min={1}
+                    max={10}
+                    onChange={handleScaleChange}
                   />
                   <button>» Save Avatar «</button>
                 </div>
