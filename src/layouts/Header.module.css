@@ -61,6 +61,24 @@
   border-radius: 10px;
 }
 
+.imageIcon {
+  width: auto;
+  height: 5vmin;
+  min-height: 25px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.container p {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .toggle_button {
     display: flex;
@@ -88,5 +106,9 @@
     flex-direction: column;
     height: auto;
     gap: 0;
+  }
+
+  .container p {
+    display: block;
   }
 }

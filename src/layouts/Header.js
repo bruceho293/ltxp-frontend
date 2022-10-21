@@ -1,9 +1,11 @@
 import React from 'react'
 import styles from './Header.module.css'
+import avatarHolder from '../assets/images/avatar.svg'
 import logoSrc from '../assets/images/logo.svg'
-import CustomLink from '../components/CustomLink'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
+
+import CustomLink from '../components/CustomLink'
 
 export default function Header() {
   const [isToggled, setIsToggled] = useState(false)
@@ -12,6 +14,9 @@ export default function Header() {
   useEffect(() => {
     setIsToggled(false)
   }, [location])
+
+  const isUserAuthenticated = true
+  const username = 'BRUCE'
 
   return (
     <header className={styles.header}>
@@ -42,7 +47,22 @@ export default function Header() {
           <CustomLink to="/search">Search</CustomLink>
           <CustomLink to="/status">Status</CustomLink>
           <CustomLink to="/#contact">Contact</CustomLink>
-          <CustomLink to="/login">Login</CustomLink>
+
+          {isUserAuthenticated ? (
+            <CustomLink to="/profile">
+              <div className={styles.container}>
+                <img
+                  className={styles.imageIcon}
+                  src={avatarHolder}
+                  alt="Profile Avatar"
+                  aria-label="Profile Avatar"
+                />
+                <p>{username}</p>
+              </div>
+            </CustomLink>
+          ) : (
+            <CustomLink to="/login">Login</CustomLink>
+          )}
         </ul>
       </nav>
     </header>
