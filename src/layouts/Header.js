@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styles from './Header.module.css'
 import avatarHolder from '../assets/images/avatar.svg'
 import logoSrc from '../assets/images/logo.svg'
@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import CustomLink from '../components/CustomLink'
+import { AuthContext } from '../contexts/AuthProvider'
 
 export default function Header() {
   const [isToggled, setIsToggled] = useState(false)
@@ -15,7 +16,7 @@ export default function Header() {
     setIsToggled(false)
   }, [location])
 
-  const isUserAuthenticated = true
+  const { isAuthenticated } = useContext(AuthContext)
   const username = 'BRUCE'
 
   return (
@@ -48,7 +49,7 @@ export default function Header() {
           <CustomLink to="/status">Status</CustomLink>
           <CustomLink to="/#contact">Contact</CustomLink>
 
-          {isUserAuthenticated ? (
+          {isAuthenticated ? (
             <CustomLink to="/profile">
               <div className={styles.container}>
                 <img

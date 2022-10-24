@@ -8,12 +8,21 @@ h2 {
   padding: 10px 0 20px 0;
   border: 1px solid var(--color-border-default);
   display: flex;
-  flex-flow: column wrap;
-  justify-content: space-around;
-  align-items: flex-start;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-end;
   gap: 1rem;
   padding: 10px;
   width: 100%;
+}
+
+.container button {
+  background-color: var(--color-bkg-btn);
+  border-radius: 10px;
+  color: var(--color-txt-default);
+  padding: 10px;
+  font-size: calc(var(--text-size-default) - 1.5vmin);
+  float: right;
 }
 
 .section {
@@ -60,6 +69,10 @@ h2 {
   background-color: var(--color-bkg-btn);
   border-radius: 10px;
   color: var(--color-txt-default);
+}
+
+.settings button:hover {
+  cursor: pointer;
 }
 
 .imageIcon {

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styles from './Profile.module.css'
 import avatarHolder from '../assets/images/avatar.svg'
-import { useItemList } from '../hooks/useItemList'
 import data from '../data/mock-laptop-data.json'
-
-import InforList from '../components/InfoList'
 import AvatarEditor from 'react-avatar-editor'
+
+import { useItemList } from '../hooks/useItemList'
+import { AuthContext } from '../contexts/AuthProvider'
+import InforList from '../components/InfoList'
 
 export default function Profile() {
   const properties = useItemList({ data: data, isProfile: true })
@@ -13,6 +14,8 @@ export default function Profile() {
   const [avatarScale, setAvatarScale] = useState(1)
   const [imgSrc, setImgSrc] = useState('')
   const [newImgSrc, setNewImgSrc] = useState('')
+
+  const { logout } = useContext(AuthContext)
 
   let timer
   const INACTIVE_EDITOR_DURATION = 5 * 60 * 1000
@@ -50,6 +53,7 @@ export default function Profile() {
     <>
       <div className={styles.container}>
         <h2>Your Profile</h2>
+        <button onClick={logout}>LOG OUT</button>
         <div className={styles.section}>
           <div className={styles.profile}>
             <div className={styles.imgContainer}>

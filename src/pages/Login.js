@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styles from './Login.module.css'
 import classnames from 'classnames'
 
+import { AuthContext } from '../contexts/AuthProvider'
+
 export default function Login() {
+  const { login } = useContext(AuthContext)
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    login()
+  }
+
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <p className={styles.title}>LOGIN</p>
       <label htmlFor="email">Email</label>
       <input
