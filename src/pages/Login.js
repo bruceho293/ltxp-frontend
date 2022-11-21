@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import styles from './Login.module.css'
 import classnames from 'classnames'
 
@@ -6,21 +6,27 @@ import { AuthContext } from '../contexts/AuthProvider'
 
 export default function Login() {
   const { login } = useContext(AuthContext)
+  const usernameRef = useRef()
+  const passwordRef = useRef()
 
   const handleSubmit = e => {
     e.preventDefault()
-    login()
+    const username = usernameRef.current.value
+    const password = passwordRef.current.value
+
+    login(username, password)
   }
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <p className={styles.title}>LOGIN</p>
-      <label htmlFor="email">Email</label>
+      <label htmlFor="username">Username</label>
       <input
-        type="email"
-        id="email"
-        name="email"
-        placeholder="Enter your email"
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your username"
+        ref={usernameRef}
         required
       />
       <label htmlFor="password">Password</label>
@@ -29,6 +35,7 @@ export default function Login() {
         id="password"
         name="password"
         placeholder="Enter your password"
+        ref={passwordRef}
         required
       />
       <div className={styles.group}>
