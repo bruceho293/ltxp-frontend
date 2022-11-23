@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useMemo } from 'react'
 import axios from 'axios'
 export const AuthContext = createContext()
 
@@ -11,23 +11,36 @@ export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
 
+  const config = useMemo(() => {
+    return {
+      headers: {
+        'x-user': user,
+      },
+    }
+  }, [user])
+
   const login = (username, password) => {
     // setIsAuthenticated(true)
-    const url = 'http://localhost:8000/user/login/'
+    const loginUrl = 'http://localhost:8000/user/login/'
+    const authorizeUrl = 'http://localhost:8000/user/authorize/'
     const data = {
       username: username,
       password: password,
-      code_challenge: 'GVQ0cbVKJbia8zsGoFxBC_qUON6lgFhyWj3lOxIzHHg',
-    }
-
-    const config = {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
     }
 
     axios
-      .post(url, data, config)
+      .post(loginUrl, data)
+      .then(response => {
+        console.log(response)
+        let _user = response.data['user']
+        setUser(_user)
+        let tempConfig = {
+          headers: {
+            'x-user': _user,
+          },
+        }
+        return axios.get(authorizeUrl, tempConfig)
+      })
       .then(response => {
         console.log(response)
       })
