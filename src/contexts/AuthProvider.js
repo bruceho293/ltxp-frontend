@@ -20,7 +20,11 @@ export default function AuthProvider({ children }) {
   }, [user])
 
   const login = (username, password) => {
+    /*
+    TODO: Create a login request from the backend with Oauth2 and DRF.
+    */
     // setIsAuthenticated(true)
+
     const loginUrl = 'http://localhost:8000/user/login/'
     const authorizeUrl = 'http://localhost:8000/user/authorize/'
     const data = {
@@ -39,7 +43,7 @@ export default function AuthProvider({ children }) {
             'x-user': _user,
           },
         }
-        return axios.get(authorizeUrl, tempConfig)
+        return axios.get(authorizeUrl + '?code_challenge=abc', tempConfig)
       })
       .then(response => {
         console.log(response)
