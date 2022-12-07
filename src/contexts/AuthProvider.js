@@ -1,52 +1,60 @@
-import React, { useState, createContext, useMemo } from 'react'
+import React, { useState, createContext, useEffect } from 'react'
 import axios from 'axios'
-export const AuthContext = createContext()
 
-const mockUserData = {
-  gmail: 'test@test.com',
-  password: '123456789',
-}
+export const AuthContext = createContext()
 
 export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
 
-  const config = useMemo(() => {
-    return {
-      headers: {
-        'x-user': user,
-      },
-    }
-  }, [user])
+  // Temporary store the tokens in localStorage.
+  const [accessToken, setAccessToken] = useState(null)
+  const [refreshToken, setRefreshToken] = useState(null)
+
+  useEffect(function getSavedTokens() {
+    let accessTok = localStorage.getItem('access_token')
+    let refreshTok = localStorage.getItem('refresh_token')
+    if (accessTok != null) setAccessToken(accessTok)
+    if (refreshTok != null) setRefreshToken(refreshTok)
+  }, [])
+
+  useEffect(
+    function saveTokens() {
+      if (refreshToken == null) {
+        localStorage.clear()
+      } else {
+        localStorage.setItem('access_token', accessToken)
+        localStorage.setItem('refresh_token', refreshToken)
+      }
+    },
+    [accessToken, refreshToken]
+  )
+
+  const authConfig = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }
 
   const login = (username, password) => {
     /*
-    TODO: Create a login request from the backend with Oauth2 and DRF.
+    Create a login request to the backend with Oauth2 Django.
     */
-    // setIsAuthenticated(true)
+    setIsAuthenticated(true)
 
-    const loginUrl = 'http://localhost:8000/user/login/'
-    const authorizeUrl = 'http://localhost:8000/user/authorize/'
-    const data = {
-      username: username,
-      password: password,
-    }
+    const url = 'http://localhost:8000/user/token/'
+    const data = new FormData()
+    data.append('username', username)
+    data.append('password', password)
+    data.append('grant_type', 'password')
+    data.append('client_id', process.env.REACT_APP_OAUTH2_CLIENT_ID)
 
     axios
-      .post(loginUrl, data)
+      .post(url, data, authConfig)
       .then(response => {
-        console.log(response)
-        let _user = response.data['user']
-        setUser(_user)
-        let tempConfig = {
-          headers: {
-            'x-user': _user,
-          },
-        }
-        return axios.get(authorizeUrl + '?code_challenge=abc', tempConfig)
-      })
-      .then(response => {
-        console.log(response)
+        let data = response.data
+        setAccessToken(data.accessToken)
+        setRefreshToken(data.refreshToken)
       })
       .catch(function(error) {
         console.log(error)
@@ -54,7 +62,26 @@ export default function AuthProvider({ children }) {
   }
 
   const logout = () => {
+    /*
+    Create a logout reqeust to the backend with OAuth2 Django.
+    */
     setIsAuthenticated(false)
+
+    const url = 'http://localhost:8000/user/revoke_token/'
+    const data = new FormData()
+    let refreshTok = refreshToken
+    data.append('token', refreshTok)
+    data.append('client_id', process.env.REACT_APP_OAUTH2_CLIENT_ID)
+
+    axios
+      .post(url, data, authConfig)
+      .then(response => {
+        setAccessToken(null)
+        setRefreshToken(null)
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   }
 
   const value = {
