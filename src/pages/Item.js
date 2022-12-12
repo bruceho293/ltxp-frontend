@@ -7,7 +7,6 @@ import classnames from 'classnames'
 
 export default function Item() {
   const params = useParams()
-  console.log(params)
   return (
     <>
       <div className={classnames(styles.container, styles.fullViewHeight)}>

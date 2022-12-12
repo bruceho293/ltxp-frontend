@@ -70,10 +70,6 @@ export default function Home() {
         <h1 id="contact" className={styles.heading}>
           Message Me
         </h1>
-        <p>
-          Whether you want to discuss about something or joining on this
-          project.
-        </p>
         <form className={styles.contact}>
           <div className={classnames(styles.group, styles.halfWidth)}>
             <input
