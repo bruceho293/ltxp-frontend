@@ -2,14 +2,16 @@ import React from 'react'
 import styles from './Home.module.css'
 import laptopSpecsSrc from '../assets/images/laptopspec.svg'
 import imageDefault from '../assets/images/image_default.svg'
-import SearchBar from '../components/SearchBar'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import classnames from 'classnames'
 
 export default function Home() {
   const { pathname, hash, key } = useLocation()
   const brandImgs = []
+  const navigate = useNavigate()
+
+  // Mock data
   const brandImgDetail = {
     brand: 'Default Brand',
     src: imageDefault,
@@ -49,7 +51,9 @@ export default function Home() {
             Where laptops and components from a set of brands meet together in
             terms of the market value and specification.
           </p>
-          <SearchBar />
+          <button className={styles.btn} onClick={() => navigate('/search')}>
+            Try searching a laptop
+          </button>
         </div>
         <div className={styles.section}>
           <img
@@ -62,7 +66,7 @@ export default function Home() {
       </div>
       <div className={styles.container}>
         <h1 className={styles.heading}>
-          Our database ocovers a wide range of famous brands.
+          LTXP database covers a wide range of famous brands.
         </h1>
         <div className={styles.brands}>{brandImgs}</div>
       </div>

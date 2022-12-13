@@ -5,11 +5,14 @@ export const AuthContext = createContext()
 
 export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [user, setUser] = useState(null)
+  const [username, setUsername] = useState(null)
+  const [userImpression, setUserImpression] = useState(null)
 
   // Temporary store the tokens in localStorage.
   const [accessToken, setAccessToken] = useState(null)
   const [refreshToken, setRefreshToken] = useState(null)
+
+  const serverHost = process.env.REACT_APP_HOST
 
   useEffect(function getSavedTokens() {
     let accessTok = localStorage.getItem('access_token')
@@ -42,7 +45,7 @@ export default function AuthProvider({ children }) {
     */
     setIsAuthenticated(true)
 
-    const url = 'http://localhost:8000/user/token/'
+    const url = serverHost + '/user/token/'
     const data = new FormData()
     data.append('username', username)
     data.append('password', password)
@@ -67,7 +70,7 @@ export default function AuthProvider({ children }) {
     */
     setIsAuthenticated(false)
 
-    const url = 'http://localhost:8000/user/revoke_token/'
+    const url = serverHost + '/user/revoke_token/'
     const data = new FormData()
     let refreshTok = refreshToken
     data.append('token', refreshTok)

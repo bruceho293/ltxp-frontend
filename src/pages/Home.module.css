@@ -15,6 +15,19 @@
   min-height: 60px;
 }
 
+.btn {
+  display: block;
+  border: 1px solid var(--color-border-default);
+  border-radius: 10px;
+  /* margin-top: 5px; */
+  padding: 0px 10px;
+  height: 40px;
+  width: 50%;
+  background-color: var(--color-bkg-btn);
+  color: var(--color-text-default);
+  font-size: var(--text-size-default);
+}
+
 .contact {
   display: flex;
   flex-direction: row;

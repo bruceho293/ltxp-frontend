@@ -21,9 +21,9 @@ export default function Search() {
             [styles.vanish]: properties.searches.length > 0,
           })}
         >
-          You can search any available laptop within current database here.
+          You can search any available laptop in the database here.
           <br></br>
-          Click on each lap top for more details.
+          Click on each laptop for more details.
         </p>
         <SearchBar onAddSearchTerm={properties.addSearchResult} />
       </div>

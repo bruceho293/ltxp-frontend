@@ -5,6 +5,14 @@
   align-items: center;
   gap: 1rem;
 }
+
+.subcontainer {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .buttonIcon {
   width: auto;
   height: 4vmin;

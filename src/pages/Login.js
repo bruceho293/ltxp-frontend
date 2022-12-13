@@ -47,7 +47,7 @@ export default function Login() {
         LOGIN
       </button>
       <a className={styles.btnLink} href="/">
-        Forgot Password?
+        Forget Password?
       </a>
       <p className={classnames(styles.group, styles.groupCenter)}>
         Need an account?{' '}

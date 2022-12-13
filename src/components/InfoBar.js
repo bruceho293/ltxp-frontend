@@ -55,14 +55,14 @@ function LaptopBar({ content, onImpChange }) {
       <p className={styles.title}>{name}</p>
       <p>Updated: {updated}</p>
       <div className={styles.nums}>
-        <p>Price: ${cost} </p>
-        <p className={styles.costDiffer}>
-          Est Comparison Price:&nbsp;
+        <p>
+          Price: ${cost} (
           <span
             className={costSign === '+' ? styles.positive : styles.negative}
           >
-            {costSign} ${costDiff < 0 ? -costDiff : costDiff}
+            {costSign}${costDiff < 0 ? -costDiff : costDiff}
           </span>
+          )
         </p>
       </div>
 

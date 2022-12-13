@@ -15,7 +15,7 @@ export default function LikeDislikeButton({
 }) {
   return (
     <p className={styles.container}>
-      <span>
+      <span className={styles.subcontainer}>
         {likes}&nbsp;
         <svg
           width="24"
@@ -42,7 +42,7 @@ export default function LikeDislikeButton({
         </svg>
       </span>
 
-      <span>
+      <span className={styles.subcontainer}>
         {dislikes}&nbsp;
         <svg
           width="24"

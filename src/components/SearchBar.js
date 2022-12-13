@@ -6,6 +6,7 @@ export default function SearchBar(props) {
 
   const handleClick = e => {
     e.preventDefault()
+
     if (searchVal === '')
       alert('Please fill in a name of the laptop in the search box !!')
     else props.onAddSearchTerm(searchVal.trim())
