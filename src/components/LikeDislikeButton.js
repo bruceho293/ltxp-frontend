@@ -9,7 +9,7 @@ export const LIKE = 1,
 export default function LikeDislikeButton({
   likes,
   dislikes,
-  id,
+  slug,
   imp,
   onImpChange,
 }) {
@@ -27,7 +27,7 @@ export default function LikeDislikeButton({
               ? styles.buttonIcon
               : classnames(styles.buttonIcon, styles.positive)
           }
-          onClick={() => onImpChange(id, LIKE)}
+          onClick={() => onImpChange(slug, LIKE)}
           xmlns="http://www.w3.org/2000/svg"
           alt="Like Icon Button"
           aria-label="Like Icon Button"
@@ -54,7 +54,7 @@ export default function LikeDislikeButton({
               ? styles.buttonIcon
               : classnames(styles.buttonIcon, styles.negative)
           }
-          onClick={() => onImpChange(id, DISLIKE)}
+          onClick={() => onImpChange(slug, DISLIKE)}
           xmlns="http://www.w3.org/2000/svg"
           alt="Dislike Icon Button"
           aria-label="Dislike Icon Button"

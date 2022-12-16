@@ -1,15 +1,15 @@
 import React from 'react'
-import styles from './InfoList.module.css'
+import styles from './ItemList.module.css'
 import filterIcon from '../assets/images/filter.svg'
-import InfoBar from '../components/InfoBar'
+import ItemBar from './ItemBar'
 
-import Pagination from '../components/Pagination'
+import Pagination from './Pagination'
 import classnames from 'classnames'
 
 const ASC_VALUE = 'asc'
 const DESC_VALUE = 'desc'
 
-export default function InforList(props) {
+export default function ItemList(props) {
   const {
     currentPage,
     currentData,
@@ -80,7 +80,7 @@ export default function InforList(props) {
         <div className={styles.bottombar}>
           <div className={classnames(styles.halfbar, styles.searches)}>
             {searches.map((result, idx) => (
-              <InfoBar
+              <ItemBar
                 key={idx}
                 color="#4AED5A"
                 content={result}
@@ -92,7 +92,7 @@ export default function InforList(props) {
             {filters.map(filter => {
               if (filter.active)
                 return (
-                  <InfoBar
+                  <ItemBar
                     key={filter.fid}
                     isFilter
                     filterID={filter.fid}
@@ -110,8 +110,8 @@ export default function InforList(props) {
       </div>
       <div className={styles.section}>
         {currentData.map(data => (
-          <InfoBar
-            key={data.id}
+          <ItemBar
+            key={data.slug}
             isLaptop
             color="#D3951C"
             content={data}

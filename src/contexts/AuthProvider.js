@@ -89,7 +89,8 @@ export default function AuthProvider({ children }) {
 
   const value = {
     isAuthenticated,
-    user,
+    username,
+    userImpression,
     login,
     logout,
   }

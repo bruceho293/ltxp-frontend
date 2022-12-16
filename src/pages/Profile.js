@@ -6,7 +6,7 @@ import AvatarEditor from 'react-avatar-editor'
 
 import { useItemList } from '../hooks/useItemList'
 import { AuthContext } from '../contexts/AuthProvider'
-import InforList from '../components/InfoList'
+import ItemList from '../components/ItemList'
 
 export default function Profile() {
   const properties = useItemList({ data: data, isProfile: true })
@@ -113,7 +113,7 @@ export default function Profile() {
       </div>
       <div className={styles.container}>
         <h2>Your Interest</h2>
-        <InforList {...properties} />
+        <ItemList {...properties} />
       </div>
     </>
   )

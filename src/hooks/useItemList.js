@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { CreateRegexFromString } from '../util'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import { PAGE_SIZE } from '../components/Pagination'
+import axios from 'axios'
 
 const ASC_VALUE = 'asc'
 const DESC_VALUE = 'desc'
@@ -37,7 +38,7 @@ const sortHelper = (arr, filterSettings) => {
   })
 }
 
-export const useItemList = ({ data, isProfile }) => {
+export const useItemList = ({ isProfile }) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [laptops, setLaptops] = useState([])
 
@@ -59,27 +60,41 @@ export const useItemList = ({ data, isProfile }) => {
       result => new RegExp(CreateRegexFromString(result))
     )
 
-    const searchData = data.filter(laptop =>
-      searchRegexes.some(regex => regex.test(laptop.name.trim().toLowerCase()))
-    )
+    let data = null
+    const host = process.env.REACT_APP_HOST
+    axios
+      .get(host + '/api/laptops/')
+      .then(response => {
+        data = response.data
+      })
+      .then(() => {
+        const searchData = data.filter(laptop =>
+          searchRegexes.some(regex =>
+            regex.test(laptop.name.trim().toLowerCase())
+          )
+        )
 
-    const interestData = data.filter(laptop => laptop.imp !== 0)
+        const interestData = data.filter(laptop => laptop.imp !== 0)
 
-    let finalData = isProfile ? interestData : searchData
+        let finalData = isProfile ? interestData : searchData
 
-    let activeFilters = []
-    filters.forEach(filter => {
-      if (filter.active) activeFilters.push(filter)
-    })
+        let activeFilters = []
+        filters.forEach(filter => {
+          if (filter.active) activeFilters.push(filter)
+        })
 
-    if (activeFilters.length > 0)
-      finalData = sortHelper(finalData, activeFilters)
-    setLaptops(finalData)
+        if (activeFilters.length > 0)
+          finalData = sortHelper(finalData, activeFilters)
+        setLaptops(finalData)
+      })
+      .catch(function(error) {
+        console.log(error)
+      })
   }, [searches, filters])
 
-  const updateLaptopImp = (laptopId, buttonPressed) => {
+  const updateLaptopImp = (laptopSlug, buttonPressed) => {
     setLaptops(() => {
-      const laptop = laptops.find(laptop => laptop.id === laptopId)
+      const laptop = laptops.find(laptop => laptop.slug === laptopSlug)
       const index = laptops.indexOf(laptop)
       const currentImp = laptop.imp
       const targetImp = buttonPressed

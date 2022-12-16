@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SearchBar from '../components/SearchBar'
 import styles from './Search.module.css'
-import data from '../data/mock-laptop-data.json'
 import classnames from 'classnames'
-import InforList from '../components/InfoList'
+import ItemList from '../components/ItemList'
 import { useItemList } from '../hooks/useItemList'
 
 export default function Search() {
-  const properties = useItemList({ data: data, isProfile: false })
+  const properties = useItemList({ isProfile: false })
 
   return (
     <>
@@ -27,7 +26,7 @@ export default function Search() {
         </p>
         <SearchBar onAddSearchTerm={properties.addSearchResult} />
       </div>
-      {properties.searches.length > 0 ? <InforList {...properties} /> : null}
+      {properties.searches.length > 0 ? <ItemList {...properties} /> : null}
     </>
   )
 }

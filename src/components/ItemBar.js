@@ -1,11 +1,12 @@
 import React from 'react'
-import styles from './InfoBar.module.css'
+import styles from './ItemBar.module.css'
 import closeIcon from '../assets/images/closeIcon.svg'
 import externalLinkIcon from '../assets/images/external-link.svg'
 import LikeDislikeButton from './LikeDislikeButton'
 import { useNavigate } from 'react-router-dom'
+import { formatDistanceToNow } from 'date-fns'
 
-export default function InfoBar({
+export default function ItemBar({
   isLaptop,
   color,
   content,
@@ -43,8 +44,18 @@ export default function InfoBar({
 }
 
 function LaptopBar({ content, onImpChange }) {
-  const { id, name, cost, costDiff, likes, dislikes, imp, updated } = content
+  const {
+    name,
+    slug,
+    price: cost,
+    price_difference: costDiff,
+    like_count: likes,
+    dislike_count: dislikes,
+    imp,
+    updated,
+  } = content
   const costSign = costDiff >= 0 ? '+' : '-'
+  const date = formatDistanceToNow(new Date(updated))
   const navigate = useNavigate()
   const handleClick = () => {
     navigate('/laptop/slug')
@@ -53,7 +64,7 @@ function LaptopBar({ content, onImpChange }) {
   return (
     <>
       <p className={styles.title}>{name}</p>
-      <p>Updated: {updated}</p>
+      <p>Updated: {date}</p>
       <div className={styles.nums}>
         <p>
           Price: ${cost} (
@@ -70,7 +81,7 @@ function LaptopBar({ content, onImpChange }) {
         likes={likes}
         dislikes={dislikes}
         onImpChange={onImpChange}
-        id={id}
+        slug={slug}
         imp={imp}
       />
 
