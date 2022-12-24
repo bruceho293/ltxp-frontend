@@ -1,12 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from './Item.module.css'
 import imageDefault from '../assets/images/image_default.svg'
 import LikeDislikeButton from '../components/LikeDislikeButton'
 import classnames from 'classnames'
+import axios from 'axios'
+import { formatDistanceToNow } from 'date-fns'
 
 export default function Item() {
-  const params = useParams()
+  const { slug } = useParams()
+  const [laptop, setLaptop] = useState('')
+
+  const componentTypeMapper = {
+    cpu: 'CPU',
+    gpu: 'GPU',
+    ram: 'RAM',
+    storage: 'DISK',
+  }
+
+  useEffect(() => {
+    const loadData = () => {
+      const host = process.env.REACT_APP_HOST
+      return axios
+        .get(host + '/api/laptops/' + slug)
+        .then(response => {
+          setLaptop(response.data)
+        })
+        .catch(error => console.log(error))
+    }
+    loadData()
+  }, [])
+
   return (
     <>
       <div className={classnames(styles.container, styles.fullViewHeight)}>
@@ -15,36 +39,35 @@ export default function Item() {
         </div>
         <div className={styles.section}>
           <p className={classnames(styles.title, styles.btnLink)}>
-            <i>HP 15 -XONSHDJS HD Laptop</i>
+            <i>{laptop.name}</i>
           </p>
           <div className={styles.subsection}>
             <p>
-              Brand: <i>HP</i>
+              Brand: <i>{laptop.brand_name}</i>
             </p>
             <p>
-              Price: <i>$ 429</i>
+              Price: <i>$ {laptop.price}</i>
             </p>
           </div>
           <div className={styles.line}></div>
           <div className={styles.subsection}>
             <p className={styles.info}>
-              Processor:{' '}
-              <i>Intel Celeron N4020 Dual Core Processor Up to 2.8 GHz</i>
+              Processor: <i></i>
             </p>
             <p className={styles.info}>
-              Memory: <i>4 GB DDR4 on board</i>
+              Memory: <i></i>
             </p>
             <p className={styles.info}>
-              Graphics: <i>Intel Iris Xe Graphics</i>
+              Graphics: <i></i>
             </p>
             <p className={styles.info}>
-              Storage: <i>128 GB eMMC</i>
+              Storage: <i></i>
             </p>
           </div>
           <div className={styles.line}></div>
           <div className={styles.subsection}>
             <p>
-              Updated: <i>1 month, 2 weeks ago</i>
+              Updated: <i>{formatDistanceToNow(new Date(laptop.updated))}</i>
             </p>
             <div className={styles.buttonGroup}>
               <button className={styles.btn}>Source</button>

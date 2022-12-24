@@ -58,7 +58,7 @@ function LaptopBar({ content, onImpChange }) {
   const date = formatDistanceToNow(new Date(updated))
   const navigate = useNavigate()
   const handleClick = () => {
-    navigate('/laptop/slug')
+    navigate('/laptop/' + slug)
   }
 
   return (
