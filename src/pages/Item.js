@@ -10,6 +10,7 @@ import { formatDistanceToNow } from 'date-fns'
 export default function Item() {
   const { slug } = useParams()
   const [laptop, setLaptop] = useState('')
+  const [specs, setSpecs] = useState('')
 
   const componentTypeMapper = {
     cpu: 'CPU',
@@ -25,11 +26,36 @@ export default function Item() {
         .get(host + '/api/laptops/' + slug)
         .then(response => {
           setLaptop(response.data)
+          const apiSpecs = response.data.specs
+          console.log(apiSpecs[0])
+          const initSpecs = {
+            cpu: apiSpecs.find(
+              component => component.category == componentTypeMapper.cpu
+            ).name,
+            gpu: apiSpecs.find(
+              component => component.category == componentTypeMapper.gpu
+            ).name,
+            ram: apiSpecs.find(
+              component => component.category == componentTypeMapper.ram
+            ).name,
+            storage: apiSpecs.find(
+              component => component.category == componentTypeMapper.storage
+            ).name,
+          }
+
+          console.log(initSpecs)
+          setSpecs(initSpecs)
         })
         .catch(error => console.log(error))
     }
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (laptop == null) return
+
+    return setSpecs(specs)
+  }, [laptop])
 
   return (
     <>
@@ -52,22 +78,24 @@ export default function Item() {
           <div className={styles.line}></div>
           <div className={styles.subsection}>
             <p className={styles.info}>
-              Processor: <i></i>
+              Processor: <i>{specs.cpu}</i>
             </p>
             <p className={styles.info}>
-              Memory: <i></i>
+              Memory: <i>{specs.ram}</i>
             </p>
             <p className={styles.info}>
-              Graphics: <i></i>
+              Graphics: <i>{specs.gpu}</i>
             </p>
             <p className={styles.info}>
-              Storage: <i></i>
+              Storage: <i>{specs.storage}</i>
             </p>
           </div>
           <div className={styles.line}></div>
           <div className={styles.subsection}>
             <p>
-              Updated: <i>{formatDistanceToNow(new Date(laptop.updated))}</i>
+              {/* Need to adjust the Date format from the server */}
+              {/* Updated: <i>{formatDistanceToNow(new Date(laptop.updated))}</i> */}
+              Updated: <i> Up to date </i>
             </p>
             <div className={styles.buttonGroup}>
               <button className={styles.btn}>Source</button>
