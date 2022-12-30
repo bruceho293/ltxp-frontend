@@ -9,6 +9,13 @@ import { formatDistanceToNow } from 'date-fns'
 
 const host = process.env.REACT_APP_HOST
 
+const componentTypeMapper = {
+  cpu: 'CPU',
+  gpu: 'GPU',
+  ram: 'RAM',
+  storage: 'DISK',
+}
+
 export default function Item() {
   const { slug } = useParams()
   const [laptop, setLaptop] = useState('')
@@ -16,14 +23,7 @@ export default function Item() {
   const [matchingSpecs, setMatchingSpecs] = useState('')
 
   const laptopDetailURL = host + 'api/laptops/' + slug
-  const laptopMatchingSpecsURL = laptopDetailURL + 'get-matching-components/'
-
-  const componentTypeMapper = {
-    cpu: 'CPU',
-    gpu: 'GPU',
-    ram: 'RAM',
-    storage: 'DISK',
-  }
+  const laptopMatchingSpecsURL = laptopDetailURL + '/get-matching-components/'
 
   const loadLaptopDetail = () => {
     return axios
@@ -45,6 +45,7 @@ export default function Item() {
             component => component.category == componentTypeMapper.storage
           ).name,
         }
+        console.log(initSpecs)
         setSpecs(initSpecs)
       })
       .catch(error => console.log(error))
@@ -76,13 +77,8 @@ export default function Item() {
 
   useEffect(() => {
     loadLaptopDetail()
+    loadLaptopMatchingSpecs()
   }, [])
-
-  useEffect(() => {
-    if (laptop == null) return
-
-    return setSpecs(specs)
-  }, [laptop])
 
   return (
     <>
@@ -134,10 +130,10 @@ export default function Item() {
       <div className={classnames(styles.container, styles.verticalFlex)}>
         <p className={styles.title}>Similar Laptop Specification</p>
         <div className={styles.cards}>
-          <LaptopComponent />
-          <LaptopComponent />
-          <LaptopComponent />
-          <LaptopComponent />
+          <LaptopComponent component={matchingSpecs.cpu} label="Processor" />
+          <LaptopComponent component={matchingSpecs.ram} label="Memory" />
+          <LaptopComponent component={matchingSpecs.gpu} label="Graphics" />
+          <LaptopComponent component={matchingSpecs.storage} label="Storage" />
         </div>
         <div className={styles.bar}>
           <p>
@@ -156,27 +152,43 @@ export default function Item() {
   )
 }
 
-const LaptopComponent = () => {
+const LaptopComponent = ({ component, label }) => {
+  const defaultValue = 'Unvailable'
+  const defaultComponent = {
+    name: defaultValue,
+    link: defaultValue,
+    brand: defaultValue,
+    comp_count: defaultValue,
+    total_price: defaultValue,
+    updated: defaultValue,
+  }
+
+  const { name, link, brand, comp_count: qnty, total_price, updated } =
+    component !== undefined ? component : defaultComponent
+
   return (
     <div className={styles.card}>
-      <p className={styles.title}>Processor</p>
+      <p className={styles.title}>{label}</p>
       <div className={styles.detail}>
         <p className={styles.btnLink}>
-          <a href="/" aria-label="Click here to go to the Source">
-            Intel CPI BX8070110100F Core i3 10100F 3.6 GHz 6MB LGCA1200 4C 8T
+          <a href={link} aria-label="Click here to go to the Source">
+            {name}
           </a>
         </p>
         <div className={styles.subDetail}>
           <p>
-            <b>Qnty:</b> <i>1</i>
+            <b>Brand:</b> <i>{brand}</i>
           </p>
           <p>
-            <b>Price:</b> <i>$114.99</i>
+            <b>Qnty:</b> <i>{qnty}</i>
+          </p>
+          <p>
+            <b>Price:</b> <i>${total_price}</i>
           </p>
         </div>
       </div>
       <p>
-        <b>Updated:</b> <i>3 months. 1 week ago</i>
+        <b>Updated:</b> <i>Up to Date</i>
       </p>
     </div>
   )
