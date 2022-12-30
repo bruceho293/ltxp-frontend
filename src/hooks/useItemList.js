@@ -63,7 +63,7 @@ export const useItemList = ({ isProfile }) => {
     let data = null
     const host = process.env.REACT_APP_HOST
     axios
-      .get(host + '/api/laptops/')
+      .get(host + 'api/laptops/')
       .then(response => {
         data = response.data
       })

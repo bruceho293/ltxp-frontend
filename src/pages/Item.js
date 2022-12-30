@@ -7,10 +7,16 @@ import classnames from 'classnames'
 import axios from 'axios'
 import { formatDistanceToNow } from 'date-fns'
 
+const host = process.env.REACT_APP_HOST
+
 export default function Item() {
   const { slug } = useParams()
   const [laptop, setLaptop] = useState('')
   const [specs, setSpecs] = useState('')
+  const [matchingSpecs, setMatchingSpecs] = useState('')
+
+  const laptopDetailURL = host + 'api/laptops/' + slug
+  const laptopMatchingSpecsURL = laptopDetailURL + 'get-matching-components/'
 
   const componentTypeMapper = {
     cpu: 'CPU',
@@ -19,36 +25,57 @@ export default function Item() {
     storage: 'DISK',
   }
 
-  useEffect(() => {
-    const loadData = () => {
-      const host = process.env.REACT_APP_HOST
-      return axios
-        .get(host + '/api/laptops/' + slug)
-        .then(response => {
-          setLaptop(response.data)
-          const apiSpecs = response.data.specs
-          console.log(apiSpecs[0])
-          const initSpecs = {
-            cpu: apiSpecs.find(
-              component => component.category == componentTypeMapper.cpu
-            ).name,
-            gpu: apiSpecs.find(
-              component => component.category == componentTypeMapper.gpu
-            ).name,
-            ram: apiSpecs.find(
-              component => component.category == componentTypeMapper.ram
-            ).name,
-            storage: apiSpecs.find(
-              component => component.category == componentTypeMapper.storage
-            ).name,
-          }
+  const loadLaptopDetail = () => {
+    return axios
+      .get(laptopDetailURL)
+      .then(response => {
+        setLaptop(response.data)
+        const apiSpecs = response.data.specs
+        const initSpecs = {
+          cpu: apiSpecs.find(
+            component => component.category == componentTypeMapper.cpu
+          ).name,
+          gpu: apiSpecs.find(
+            component => component.category == componentTypeMapper.gpu
+          ).name,
+          ram: apiSpecs.find(
+            component => component.category == componentTypeMapper.ram
+          ).name,
+          storage: apiSpecs.find(
+            component => component.category == componentTypeMapper.storage
+          ).name,
+        }
+        setSpecs(initSpecs)
+      })
+      .catch(error => console.log(error))
+  }
 
-          console.log(initSpecs)
-          setSpecs(initSpecs)
-        })
-        .catch(error => console.log(error))
-    }
-    loadData()
+  const loadLaptopMatchingSpecs = () => {
+    return axios
+      .get(laptopMatchingSpecsURL)
+      .then(response => {
+        const data = response.data
+        const matchingSpecs = {
+          cpu: data.find(
+            component => component.category == componentTypeMapper.cpu
+          ),
+          gpu: data.find(
+            component => component.category == componentTypeMapper.gpu
+          ),
+          ram: data.find(
+            component => component.category == componentTypeMapper.ram
+          ),
+          storage: data.find(
+            component => component.category == componentTypeMapper.storage
+          ),
+        }
+        setMatchingSpecs(matchingSpecs)
+      })
+      .catch(error => console.log(error))
+  }
+
+  useEffect(() => {
+    loadLaptopDetail()
   }, [])
 
   useEffect(() => {
