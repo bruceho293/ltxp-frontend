@@ -18,9 +18,11 @@ const componentTypeMapper = {
 
 export default function Item() {
   const { slug } = useParams()
-  const [laptop, setLaptop] = useState('')
+  const [laptop, setLaptop] = useState({})
   const [specs, setSpecs] = useState('')
   const [matchingSpecs, setMatchingSpecs] = useState('')
+  const [matchingSpecsTotalPrice, setMatchingSpecsTotalPrice] = useState(0)
+  const [priceDifferenceSign, setPriceDifferenceSign] = useState('+')
 
   const laptopDetailURL = host + 'api/laptops/' + slug
   const laptopMatchingSpecsURL = laptopDetailURL + '/get-matching-components/'
@@ -29,8 +31,28 @@ export default function Item() {
     return axios
       .get(laptopDetailURL)
       .then(response => {
-        setLaptop(response.data)
-        const apiSpecs = response.data.specs
+        let currentLaptop = response.data
+        if (Number(currentLaptop.price_difference) < 0) {
+          setPriceDifferenceSign('-')
+          currentLaptop.price_difference = -Number(
+            currentLaptop.price_difference
+          )
+        }
+        setLaptop({
+          name: currentLaptop.name,
+          slug: currentLaptop.slug,
+          brand_name: currentLaptop.brand_name,
+          price: currentLaptop.brand_name,
+          link: currentLaptop.brand_name,
+          updated: currentLaptop.updated,
+          specs: currentLaptop.specs,
+          price_difference: currentLaptop.price_difference,
+          like_count: currentLaptop.like_count,
+          dislike_count: currentLaptop.dislike_count,
+        })
+
+        console.log(currentLaptop)
+        const apiSpecs = currentLaptop.specs
         const initSpecs = {
           cpu: apiSpecs.find(
             component => component.category == componentTypeMapper.cpu
@@ -45,7 +67,6 @@ export default function Item() {
             component => component.category == componentTypeMapper.storage
           ).name,
         }
-        console.log(initSpecs)
         setSpecs(initSpecs)
       })
       .catch(error => console.log(error))
@@ -70,6 +91,15 @@ export default function Item() {
             component => component.category == componentTypeMapper.storage
           ),
         }
+        let totalAllPrice = 0
+        Object.keys(matchingSpecs).forEach(
+          spec =>
+            (totalAllPrice =
+              totalAllPrice + Number(matchingSpecs[spec].total_price))
+        )
+        totalAllPrice = totalAllPrice.toFixed(2)
+
+        setMatchingSpecsTotalPrice(totalAllPrice)
         setMatchingSpecs(matchingSpecs)
       })
       .catch(error => console.log(error))
@@ -87,7 +117,7 @@ export default function Item() {
           <img className={styles.image} src={imageDefault} alt="Default Icon" />
         </div>
         <div className={styles.section}>
-          <p className={classnames(styles.title, styles.btnLink)}>
+          <p className={classnames(styles.title)}>
             <i>{laptop.name}</i>
           </p>
           <div className={styles.subsection}>
@@ -117,8 +147,13 @@ export default function Item() {
           <div className={styles.subsection}>
             <p>
               {/* Need to adjust the Date format from the server */}
-              {/* Updated: <i>{formatDistanceToNow(new Date(laptop.updated))}</i> */}
-              Updated: <i> Up to date </i>
+              {/* Updated: {formatDistanceToNow(new Date(laptop.updated))} */}
+              {/* Updated: {new Date(laptop.updated).toLocaleString()} */}
+              Updated:{' '}
+              {formatDistanceToNow(
+                new Date('2023-01-27T17:13:35.210220-05:00')
+              )}
+              {/* Updated: <i> Up to date </i> */}
             </p>
             <div className={styles.buttonGroup}>
               <button className={styles.btn}>Source</button>
@@ -137,13 +172,22 @@ export default function Item() {
         </div>
         <div className={styles.bar}>
           <p>
-            <b>Specification:</b> <i>$215.50</i>
+            <b>Specification:</b> <i>${matchingSpecsTotalPrice}</i>
           </p>
           <p>
-            <b>Laptop:</b> <i>$374.16</i>
+            <b>Laptop:</b> <i>${laptop.price}</i>
           </p>
           <p>
-            <b>Comparison:</b> <i>-$156.86</i>
+            <b>Comparison: </b>
+            <i>
+              <span
+                className={
+                  priceDifferenceSign == '+' ? styles.positive : styles.negative
+                }
+              >
+                {priceDifferenceSign}${laptop.price_difference}
+              </span>
+            </i>
           </p>
           <LikeDislikeButton likes={10} dislikes={5} />
         </div>

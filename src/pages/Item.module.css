@@ -145,3 +145,11 @@
   width: 70%;
   text-align: right;
 }
+
+.positive {
+  color: #00c22b;
+}
+
+.negative {
+  color: #f00c0c;
+}
