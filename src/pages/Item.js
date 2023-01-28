@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import styles from './Item.module.css'
 import imageDefault from '../assets/images/image_default.svg'
 import LikeDislikeButton from '../components/LikeDislikeButton'
 import classnames from 'classnames'
 import axios from 'axios'
-import { formatDistanceToNow } from 'date-fns'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 const host = process.env.REACT_APP_HOST
 
@@ -18,11 +18,23 @@ const componentTypeMapper = {
 
 export default function Item() {
   const { slug } = useParams()
-  const [laptop, setLaptop] = useState({})
+  const [laptop, setLaptop] = useState({
+    name: '',
+    slug: '',
+    brand_name: '',
+    price: 0,
+    link: '',
+    updated: '',
+    specs: [],
+    price_difference: 0,
+    like_count: 0,
+    dislike_count: 0,
+  })
   const [specs, setSpecs] = useState('')
   const [matchingSpecs, setMatchingSpecs] = useState('')
   const [matchingSpecsTotalPrice, setMatchingSpecsTotalPrice] = useState(0)
   const [priceDifferenceSign, setPriceDifferenceSign] = useState('+')
+  const [updatedTime, setUpdatedTime] = useState(null)
 
   const laptopDetailURL = host + 'api/laptops/' + slug
   const laptopMatchingSpecsURL = laptopDetailURL + '/get-matching-components/'
@@ -34,15 +46,30 @@ export default function Item() {
         let currentLaptop = response.data
         if (Number(currentLaptop.price_difference) < 0) {
           setPriceDifferenceSign('-')
-          currentLaptop.price_difference = -Number(
-            currentLaptop.price_difference
-          )
         }
+        const apiSpecs = currentLaptop.specs
+        const initSpecs = {
+          cpu: apiSpecs.find(
+            component => component.category === componentTypeMapper.cpu
+          ).name,
+          gpu: apiSpecs.find(
+            component => component.category === componentTypeMapper.gpu
+          ).name,
+          ram: apiSpecs.find(
+            component => component.category === componentTypeMapper.ram
+          ).name,
+          storage: apiSpecs.find(
+            component => component.category === componentTypeMapper.storage
+          ).name,
+        }
+
+        setSpecs(initSpecs)
+        setUpdatedTime(new Date(currentLaptop.updated))
         setLaptop({
           name: currentLaptop.name,
           slug: currentLaptop.slug,
           brand_name: currentLaptop.brand_name,
-          price: currentLaptop.brand_name,
+          price: currentLaptop.price,
           link: currentLaptop.brand_name,
           updated: currentLaptop.updated,
           specs: currentLaptop.specs,
@@ -50,24 +77,6 @@ export default function Item() {
           like_count: currentLaptop.like_count,
           dislike_count: currentLaptop.dislike_count,
         })
-
-        console.log(currentLaptop)
-        const apiSpecs = currentLaptop.specs
-        const initSpecs = {
-          cpu: apiSpecs.find(
-            component => component.category == componentTypeMapper.cpu
-          ).name,
-          gpu: apiSpecs.find(
-            component => component.category == componentTypeMapper.gpu
-          ).name,
-          ram: apiSpecs.find(
-            component => component.category == componentTypeMapper.ram
-          ).name,
-          storage: apiSpecs.find(
-            component => component.category == componentTypeMapper.storage
-          ).name,
-        }
-        setSpecs(initSpecs)
       })
       .catch(error => console.log(error))
   }
@@ -79,16 +88,16 @@ export default function Item() {
         const data = response.data
         const matchingSpecs = {
           cpu: data.find(
-            component => component.category == componentTypeMapper.cpu
+            component => component.category === componentTypeMapper.cpu
           ),
           gpu: data.find(
-            component => component.category == componentTypeMapper.gpu
+            component => component.category === componentTypeMapper.gpu
           ),
           ram: data.find(
-            component => component.category == componentTypeMapper.ram
+            component => component.category === componentTypeMapper.ram
           ),
           storage: data.find(
-            component => component.category == componentTypeMapper.storage
+            component => component.category === componentTypeMapper.storage
           ),
         }
         let totalAllPrice = 0
@@ -104,6 +113,14 @@ export default function Item() {
       })
       .catch(error => console.log(error))
   }
+
+  const distanceToNow = useMemo(() => {
+    const dateObject = laptop.updated !== '' ? new Date(laptop.updated) : null
+
+    return laptop.updated !== ''
+      ? formatDistanceToNow(dateObject, { addSuffix: true })
+      : 'Unavailable'
+  }, [laptop])
 
   useEffect(() => {
     loadLaptopDetail()
@@ -147,13 +164,19 @@ export default function Item() {
           <div className={styles.subsection}>
             <p>
               {/* Need to adjust the Date format from the server */}
-              {/* Updated: {formatDistanceToNow(new Date(laptop.updated))} */}
-              {/* Updated: {new Date(laptop.updated).toLocaleString()} */}
-              Updated:{' '}
+              {/* Updated: {formatDistanceToNow(new Date(sampleDateTime))} */}
+              {/* Updated:{' '}
+              {formatDistanceToNow(new Date(laptop.updated.toString()))} */}
+              {/* Updated: {new Date(new Date(laptop.updated)).toLocaleDateString} */}
+              {/* Updated:{' '}
               {formatDistanceToNow(
                 new Date('2023-01-27T17:13:35.210220-05:00')
-              )}
+              )} */}
               {/* Updated: <i> Up to date </i> */}
+              {/* 
+                CURRENT ALTERNATIVE 
+              */}
+              Updated: <i>{distanceToNow}</i>
             </p>
             <div className={styles.buttonGroup}>
               <button className={styles.btn}>Source</button>
@@ -182,10 +205,15 @@ export default function Item() {
             <i>
               <span
                 className={
-                  priceDifferenceSign == '+' ? styles.positive : styles.negative
+                  priceDifferenceSign === '+'
+                    ? styles.positive
+                    : styles.negative
                 }
               >
-                {priceDifferenceSign}${laptop.price_difference}
+                {priceDifferenceSign}$
+                {priceDifferenceSign === '+'
+                  ? laptop.price_difference
+                  : -laptop.price_difference}
               </span>
             </i>
           </p>
@@ -232,7 +260,12 @@ const LaptopComponent = ({ component, label }) => {
         </div>
       </div>
       <p>
-        <b>Updated:</b> <i>Up to Date</i>
+        <b>Updated:</b>{' '}
+        <i>
+          {component !== undefined
+            ? formatDistanceToNow(new Date(updated))
+            : defaultValue}
+        </i>
       </p>
     </div>
   )
