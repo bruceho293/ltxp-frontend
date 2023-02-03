@@ -3,9 +3,7 @@ import { CreateRegexFromString } from '../util'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import { PAGE_SIZE } from '../components/Pagination'
 import axios from 'axios'
-
-const ASC_VALUE = 'asc'
-const DESC_VALUE = 'desc'
+import { ASC_VALUE } from '../constants/global'
 
 const filterJson = (fid, title, label, field) => {
   return {

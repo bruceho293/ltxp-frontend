@@ -1,14 +1,13 @@
 import React from 'react'
+import { usePagination } from '../hooks/usePagination'
+import styles from './Pagination.module.css'
+import classnames from 'classnames'
 import {
   FIRST_PAGE,
   PREV_PAGE,
   NEXT_PAGE,
   LAST_PAGE,
-  usePagination,
-} from '../hooks/usePagination'
-import styles from './Pagination.module.css'
-import classnames from 'classnames'
-
+} from '../constants/global'
 export const PAGE_SIZE = 5
 
 export default function Pagination(props) {

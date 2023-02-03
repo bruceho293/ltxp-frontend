@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import SearchBar from '../components/SearchBar'
 import styles from './Search.module.css'
 import classnames from 'classnames'

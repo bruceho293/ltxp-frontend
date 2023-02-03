@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import styles from './Item.module.css'
 import imageDefault from '../assets/images/image_default.svg'
 import LikeDislikeButton from '../components/LikeDislikeButton'
@@ -34,10 +34,10 @@ export default function Item() {
   const [matchingSpecs, setMatchingSpecs] = useState('')
   const [matchingSpecsTotalPrice, setMatchingSpecsTotalPrice] = useState(0)
   const [priceDifferenceSign, setPriceDifferenceSign] = useState('+')
-  const [updatedTime, setUpdatedTime] = useState(null)
 
   const laptopDetailURL = host + 'api/laptops/' + slug
   const laptopMatchingSpecsURL = laptopDetailURL + '/get-matching-components/'
+  const navigate = useNavigate()
 
   const loadLaptopDetail = () => {
     return axios
@@ -64,7 +64,6 @@ export default function Item() {
         }
 
         setSpecs(initSpecs)
-        setUpdatedTime(new Date(currentLaptop.updated))
         setLaptop({
           name: currentLaptop.name,
           slug: currentLaptop.slug,
@@ -112,6 +111,15 @@ export default function Item() {
         setMatchingSpecs(matchingSpecs)
       })
       .catch(error => console.log(error))
+  }
+
+  const handleClickToSource = sourceLink => {
+    console.log(`SouceLink: ${laptop}`)
+    window.location.assign(sourceLink)
+  }
+
+  const handleClickBack = () => {
+    navigate(-1)
   }
 
   const distanceToNow = useMemo(() => {
@@ -179,8 +187,15 @@ export default function Item() {
               Updated: <i>{distanceToNow}</i>
             </p>
             <div className={styles.buttonGroup}>
-              <button className={styles.btn}>Source</button>
-              <button className={styles.btn}>Back to Search</button>
+              <button
+                className={styles.btn}
+                onClick={() => handleClickToSource(laptop.link)}
+              >
+                Source
+              </button>
+              <button className={styles.btn} onClick={handleClickBack}>
+                Back to Search
+              </button>
             </div>
           </div>
         </div>

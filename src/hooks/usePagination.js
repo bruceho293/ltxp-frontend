@@ -1,4 +1,10 @@
 import { useMemo } from 'react'
+import {
+  NEXT_PAGE,
+  PREV_PAGE,
+  FIRST_PAGE,
+  LAST_PAGE,
+} from '../constants/global'
 
 const range = (start, end) => {
   let length = end - start + 1
@@ -7,11 +13,6 @@ const range = (start, end) => {
     */
   return Array.from({ length }, (_, idx) => idx + start)
 }
-
-export const NEXT_PAGE = ' Next '
-export const PREV_PAGE = ' Previous '
-export const FIRST_PAGE = ' First '
-export const LAST_PAGE = ' Last '
 
 export const usePagination = ({
   totalCount,
