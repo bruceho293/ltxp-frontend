@@ -1,5 +1,9 @@
 import { useEffect, useState, useMemo } from 'react'
-import { CreateRegexFromString } from '../util'
+import {
+  CreateRegexFromString,
+  AddSearchResultsFromStorage,
+  RemoveSearchResultsFromStorage,
+} from '../util'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import { PAGE_SIZE } from '../components/Pagination'
 import axios from 'axios'
@@ -53,6 +57,13 @@ export const useItemList = ({ isProfile }) => {
     return laptops.slice(firstPageIndex, lastPageIndex)
   }, [currentPage, laptops])
 
+  // Get the saved search terms and fitlter options when component mounted
+  useEffect(() => {
+    const searchesString = localStorage.getItem('searches')
+    if (searchesString != null) setSearches(JSON.parse(searchesString))
+  }, [])
+
+  // Update the data based on search terms and filter options
   useEffect(() => {
     const searchRegexes = searches.map(
       result => new RegExp(CreateRegexFromString(result))
@@ -127,15 +138,21 @@ export const useItemList = ({ isProfile }) => {
   }
 
   const addSearchResult = result => {
-    if (!searches.includes(result)) setSearches(searches.concat(result))
+    const resultLower = result.toLowerCase()
+    if (!searches.includes(resultLower)) {
+      setSearches(searches.concat(resultLower))
+      AddSearchResultsFromStorage(resultLower)
+    }
   }
 
   const deleteSearchResult = result => {
+    const resultLower = result.toLowerCase()
     const temps = [...searches]
-    const index = temps.indexOf(result)
+    const index = temps.indexOf(resultLower)
     if (index > -1) {
       temps.splice(index, 1)
       setSearches(temps)
+      RemoveSearchResultsFromStorage(resultLower)
     }
   }
 
