@@ -3,11 +3,19 @@ import {
   CreateRegexFromString,
   AddSearchResultsFromStorage,
   RemoveSearchResultsFromStorage,
+  UpdateFilterOptionFromStorage,
+  GetFilterOptionFromStorage,
 } from '../util'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import { PAGE_SIZE } from '../components/Pagination'
 import axios from 'axios'
-import { ASC_VALUE } from '../constants/global'
+import {
+  ASC_VALUE,
+  DESC_VALUE,
+  FILTER_ACTIVE_ASC,
+  FILTER_ACTIVE_DESC,
+  FILTER_NOT_ACTIVE,
+} from '../constants/global'
 
 const filterJson = (fid, title, label, field) => {
   return {
@@ -24,7 +32,7 @@ const filterJson = (fid, title, label, field) => {
 
 const filtersTemplate = [
   filterJson(1, 'Price', 'price', 'cost'),
-  filterJson(2, 'Ext Comparison Price', 'extComparePrice', 'costDiff'),
+  filterJson(2, 'Comparison Price', 'estComparisonPrice', 'costDiff'),
   filterJson(3, 'Last Update Day', 'LUD', 'updated'),
 ]
 
@@ -61,6 +69,16 @@ export const useItemList = ({ isProfile }) => {
   useEffect(() => {
     const searchesString = localStorage.getItem('searches')
     if (searchesString != null) setSearches(JSON.parse(searchesString))
+
+    let savedFilters = [...filters]
+    savedFilters.forEach(filter => {
+      const savedValue = GetFilterOptionFromStorage(filter.label)
+      let value = ASC_VALUE
+      if (savedValue == null) return
+      if (savedValue === FILTER_ACTIVE_DESC) value = DESC_VALUE
+      filter.active = true
+      filter.isAsc = value === ASC_VALUE
+    })
   }, [])
 
   // Update the data based on search terms and filter options
@@ -158,28 +176,38 @@ export const useItemList = ({ isProfile }) => {
 
   const addFilter = event => {
     const { value, fid } = event.target.dataset
-
     const index = filters.findIndex(filter => filter.fid === Number(fid))
+    const label = filters[index].label
     const newFilters = [...filters]
+
     if (index > -1) {
       newFilters[index] = {
         ...newFilters[index],
         active: true,
         isAsc: value === ASC_VALUE,
       }
+      UpdateFilterOptionFromStorage(
+        label,
+        value === ASC_VALUE ? FILTER_ACTIVE_ASC : FILTER_ACTIVE_DESC
+      )
     }
+
     setFilters(newFilters)
   }
 
   const deleteFilter = fid => {
     const index = filters.findIndex(filter => filter.fid === Number(fid))
+    const label = filters[index].label
     const newFilters = [...filters]
+
     if (index > -1) {
       newFilters[index] = {
         ...newFilters[index],
         active: false,
       }
+      UpdateFilterOptionFromStorage(label, FILTER_NOT_ACTIVE)
     }
+
     setFilters(newFilters)
   }
 
