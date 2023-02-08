@@ -48,3 +48,15 @@ export function UpdateFilterOptionFromStorage(label, value) {
 export function GetFilterOptionFromStorage(label) {
   return localStorage.getItem(label)
 }
+
+export const sortHelper = (arr, filterSettings) => {
+  return arr.sort(function(a, b) {
+    for (let i = 0; i < filterSettings.length; i++) {
+      const sign = filterSettings[i].isAsc ? 1 : -1
+      const field = filterSettings[i].field
+      if (a[field] > b[field]) return sign
+      if (a[field] < b[field]) return -1 * sign
+    }
+    return 0
+  })
+}

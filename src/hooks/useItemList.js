@@ -5,6 +5,7 @@ import {
   RemoveSearchResultsFromStorage,
   UpdateFilterOptionFromStorage,
   GetFilterOptionFromStorage,
+  sortHelper,
 } from '../util'
 import { LIKE, DISLIKE, NEUTRAL } from '../components/LikeDislikeButton.js'
 import { PAGE_SIZE } from '../components/Pagination'
@@ -17,7 +18,14 @@ import {
   FILTER_NOT_ACTIVE,
 } from '../constants/global'
 
-const filterJson = (fid, title, label, field) => {
+const filterJson = (
+  fid,
+  title,
+  label,
+  field,
+  ascLableValue = 'Lo > Hi',
+  descLabelValue = 'Hi > Lo'
+) => {
   return {
     fid: fid,
     title: title,
@@ -25,28 +33,16 @@ const filterJson = (fid, title, label, field) => {
     field: field,
     active: false,
     isAsc: true,
-    ascLabel: 'Lo > Hi',
-    descLabel: 'Hi > Lo',
+    ascLabel: ascLableValue,
+    descLabel: descLabelValue,
   }
 }
 
 const filtersTemplate = [
-  filterJson(1, 'Price', 'price', 'cost'),
-  filterJson(2, 'Comparison Price', 'estComparisonPrice', 'costDiff'),
-  filterJson(3, 'Last Update Day', 'LUD', 'updated'),
+  filterJson(1, 'Price', 'price', 'price'),
+  filterJson(2, 'Comparison Price', 'estComparisonPrice', 'price_difference'),
+  filterJson(3, 'Last Update Day', 'LUD', 'updated', 'Oldest', 'Newest'),
 ]
-
-const sortHelper = (arr, filterSettings) => {
-  return arr.sort(function(a, b) {
-    for (let i = 0; i < filterSettings.length; i++) {
-      const sign = filterSettings[i].isAsc ? 1 : -1
-      const field = filterSettings[i].field
-      if (a[field] > b[field]) return sign
-      if (a[field] < b[field]) return -1 * sign
-    }
-    return 0
-  })
-}
 
 export const useItemList = ({ isProfile }) => {
   const [currentPage, setCurrentPage] = useState(1)
@@ -95,15 +91,16 @@ export const useItemList = ({ isProfile }) => {
         data = response.data
       })
       .then(() => {
-        const searchData = data.filter(laptop =>
+        let interestData = data.filter(laptop => laptop.imp !== 0)
+        let currentData = isProfile ? interestData : data
+
+        const searchData = currentData.filter(laptop =>
           searchRegexes.some(regex =>
             regex.test(laptop.name.trim().toLowerCase())
           )
         )
 
-        const interestData = data.filter(laptop => laptop.imp !== 0)
-
-        let finalData = isProfile ? interestData : searchData
+        let finalData = searchData
 
         let activeFilters = []
         filters.forEach(filter => {

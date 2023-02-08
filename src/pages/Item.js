@@ -6,15 +6,9 @@ import LikeDislikeButton from '../components/LikeDislikeButton'
 import classnames from 'classnames'
 import axios from 'axios'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { COMPONENT_TYPE_API } from '../constants/global'
 
 const host = process.env.REACT_APP_HOST
-
-const componentTypeMapper = {
-  cpu: 'CPU',
-  gpu: 'GPU',
-  ram: 'RAM',
-  storage: 'DISK',
-}
 
 export default function Item() {
   const { slug } = useParams()
@@ -43,39 +37,53 @@ export default function Item() {
     return axios
       .get(laptopDetailURL)
       .then(response => {
-        let currentLaptop = response.data
+        const currentLaptop = response.data
         if (Number(currentLaptop.price_difference) < 0) {
           setPriceDifferenceSign('-')
         }
         const apiSpecs = currentLaptop.specs
-        const initSpecs = {
-          cpu: apiSpecs.find(
-            component => component.category === componentTypeMapper.cpu
-          ).name,
-          gpu: apiSpecs.find(
-            component => component.category === componentTypeMapper.gpu
-          ).name,
-          ram: apiSpecs.find(
-            component => component.category === componentTypeMapper.ram
-          ).name,
-          storage: apiSpecs.find(
-            component => component.category === componentTypeMapper.storage
-          ).name,
+
+        // Get all the components in a category
+        let initSpecs = {
+          cpu: apiSpecs.filter(
+            component => component.category === COMPONENT_TYPE_API.cpu
+          ),
+          gpu: apiSpecs.filter(
+            component => component.category === COMPONENT_TYPE_API.gpu
+          ),
+          ram: apiSpecs.filter(
+            component => component.category === COMPONENT_TYPE_API.ram
+          ),
+          storage: apiSpecs.filter(
+            component => component.category === COMPONENT_TYPE_API.storage
+          ),
+        }
+
+        initSpecs = {
+          cpu: initSpecs.cpu
+            .map(component => component.name)
+            .toString()
+            .split(',')
+            .join(', '),
+          gpu: initSpecs.gpu
+            .map(component => component.name)
+            .toString()
+            .split(',')
+            .join(', '),
+          ram: initSpecs.ram
+            .map(component => component.name)
+            .toString()
+            .split(',')
+            .join(', '),
+          storage: initSpecs.storage
+            .map(component => component.name)
+            .toString()
+            .split(',')
+            .join(', '),
         }
 
         setSpecs(initSpecs)
-        setLaptop({
-          name: currentLaptop.name,
-          slug: currentLaptop.slug,
-          brand_name: currentLaptop.brand_name,
-          price: currentLaptop.price,
-          link: currentLaptop.brand_name,
-          updated: currentLaptop.updated,
-          specs: currentLaptop.specs,
-          price_difference: currentLaptop.price_difference,
-          like_count: currentLaptop.like_count,
-          dislike_count: currentLaptop.dislike_count,
-        })
+        setLaptop(currentLaptop)
       })
       .catch(error => console.log(error))
   }
@@ -86,24 +94,25 @@ export default function Item() {
       .then(response => {
         const data = response.data
         const matchingSpecs = {
-          cpu: data.find(
-            component => component.category === componentTypeMapper.cpu
+          cpu: data.filter(
+            component => component.category === COMPONENT_TYPE_API.cpu
           ),
-          gpu: data.find(
-            component => component.category === componentTypeMapper.gpu
+          gpu: data.filter(
+            component => component.category === COMPONENT_TYPE_API.gpu
           ),
-          ram: data.find(
-            component => component.category === componentTypeMapper.ram
+          ram: data.filter(
+            component => component.category === COMPONENT_TYPE_API.ram
           ),
-          storage: data.find(
-            component => component.category === componentTypeMapper.storage
+          storage: data.filter(
+            component => component.category === COMPONENT_TYPE_API.storage
           ),
         }
         let totalAllPrice = 0
-        Object.keys(matchingSpecs).forEach(
-          spec =>
-            (totalAllPrice =
-              totalAllPrice + Number(matchingSpecs[spec].total_price))
+        Object.keys(matchingSpecs).forEach(spec =>
+          matchingSpecs[spec].forEach(
+            component =>
+              (totalAllPrice = totalAllPrice + Number(component.total_price))
+          )
         )
         totalAllPrice = totalAllPrice.toFixed(2)
 
@@ -123,17 +132,15 @@ export default function Item() {
   }
 
   const distanceToNow = useMemo(() => {
-    const dateObject = laptop.updated !== '' ? new Date(laptop.updated) : null
-
-    return laptop.updated !== ''
-      ? formatDistanceToNow(dateObject, { addSuffix: true })
-      : 'Unavailable'
+    if (laptop.updated === '') return 'Unavailable'
+    const dateObject = new Date(laptop.updated)
+    return formatDistanceToNow(dateObject, { addSuffix: true })
   }, [laptop])
 
   useEffect(() => {
     loadLaptopDetail()
     loadLaptopMatchingSpecs()
-  }, [])
+  })
 
   return (
     <>
@@ -193,7 +200,7 @@ export default function Item() {
               >
                 Source
               </button>
-              <button className={styles.btn} onClick={handleClickBack}>
+              <button className={styles.btn} onClick={() => handleClickBack()}>
                 Back to Search
               </button>
             </div>
@@ -203,10 +210,10 @@ export default function Item() {
       <div className={classnames(styles.container, styles.verticalFlex)}>
         <p className={styles.title}>Similar Laptop Specification</p>
         <div className={styles.cards}>
-          <LaptopComponent component={matchingSpecs.cpu} label="Processor" />
-          <LaptopComponent component={matchingSpecs.ram} label="Memory" />
-          <LaptopComponent component={matchingSpecs.gpu} label="Graphics" />
-          <LaptopComponent component={matchingSpecs.storage} label="Storage" />
+          <LaptopComponent components={matchingSpecs.cpu} label="Processor" />
+          <LaptopComponent components={matchingSpecs.ram} label="Memory" />
+          <LaptopComponent components={matchingSpecs.gpu} label="Graphics" />
+          <LaptopComponent components={matchingSpecs.storage} label="Storage" />
         </div>
         <div className={styles.bar}>
           <p>
@@ -239,49 +246,52 @@ export default function Item() {
   )
 }
 
-const LaptopComponent = ({ component, label }) => {
-  const defaultValue = 'Unvailable'
-  const defaultComponent = {
-    name: defaultValue,
-    link: defaultValue,
-    brand: defaultValue,
-    comp_count: defaultValue,
-    total_price: defaultValue,
-    updated: defaultValue,
-  }
+const LaptopComponent = ({ components, label }) => {
+  const defaultValueDisplay = <div className={styles.detail}>Unavailable</div>
+  const componentsDisplay = components?.map(component => {
+    return (
+      <div className={styles.subcard} key={component.name}>
+        <div className={styles.detail}>
+          <p className={styles.btnLink}>
+            <a
+              href={component.link}
+              aria-label="Click here to go to the Source"
+            >
+              {component.name}
+            </a>
+          </p>
+          <div className={styles.subDetail}>
+            <p>
+              <b>Brand:</b> <i>{component.brand}</i>
+            </p>
+            <p>
+              <b>Qnty:</b> <i>{component.comp_count}</i>
+            </p>
+            <p>
+              <b>Price:</b> <i>${component.total_price}</i>
+            </p>
+          </div>
+        </div>
+        <p>
+          <b>Updated:</b>{' '}
+          <i>
+            {formatDistanceToNow(new Date(component.updated), {
+              addSuffix: true,
+            })}
+          </i>
+        </p>
+        <div className={classnames(styles.line, styles.positiveBkg)}></div>
+      </div>
+    )
+  })
 
-  const { name, link, brand, comp_count: qnty, total_price, updated } =
-    component !== undefined ? component : defaultComponent
+  const finalComponentDisplay =
+    components?.length === 0 ? defaultValueDisplay : componentsDisplay
 
   return (
     <div className={styles.card}>
       <p className={styles.title}>{label}</p>
-      <div className={styles.detail}>
-        <p className={styles.btnLink}>
-          <a href={link} aria-label="Click here to go to the Source">
-            {name}
-          </a>
-        </p>
-        <div className={styles.subDetail}>
-          <p>
-            <b>Brand:</b> <i>{brand}</i>
-          </p>
-          <p>
-            <b>Qnty:</b> <i>{qnty}</i>
-          </p>
-          <p>
-            <b>Price:</b> <i>${total_price}</i>
-          </p>
-        </div>
-      </div>
-      <p>
-        <b>Updated:</b>{' '}
-        <i>
-          {component !== undefined
-            ? formatDistanceToNow(new Date(updated))
-            : defaultValue}
-        </i>
-      </p>
+      {finalComponentDisplay}
     </div>
   )
 }

@@ -19,7 +19,6 @@
   border-radius: 15px;
   flex-flow: column wrap;
   text-align: left;
-  justify-content: space-between;
   gap: 1rem;
   padding: 10px;
   margin: 0 10px;
@@ -65,6 +64,11 @@
   width: 65%;
 }
 
+.subcard {
+  display: block;
+  position: relative;
+}
+
 .subsection {
   display: flex;
   flex-flow: row wrap;
@@ -85,6 +89,7 @@
   width: 100%;
   border-radius: 1px;
   background-color: var(--color-txt-default);
+  margin-top: 20px;
 }
 
 .buttonGroup {
@@ -152,4 +157,8 @@
 
 .negative {
   color: #f00c0c;
+}
+
+.positiveBkg {
+  background-color: hsla(133, 100%, 38%, 0.5);
 }
