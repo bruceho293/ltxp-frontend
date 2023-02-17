@@ -1,34 +1,53 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import styles from './Home.module.css'
 import laptopSpecsSrc from '../assets/images/laptopspec.svg'
 import imageDefault from '../assets/images/image_default.svg'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import classnames from 'classnames'
+import axios from 'axios'
 
 export default function Home() {
   const { pathname, hash, key } = useLocation()
-  const brandImgs = []
+  const [brandLogos, setBrandLogos] = useState([])
+  const host = process.env.REACT_APP_HOST
+  const brandLogoURI = host + 'api/brands/'
   const navigate = useNavigate()
 
   // Mock data
-  const brandImgDetail = {
-    brand: 'Default Brand',
-    src: imageDefault,
-    alt: 'Logo of a brand.',
-  }
+  // const brandImgDetail = {
+  //   brand: 'Default Brand',
+  //   src: imageDefault,
+  //   alt: 'Logo of a brand.',
+  // }
 
-  for (let i = 0; i < 22; i++) {
-    brandImgs.push(
-      <div key={i}>
-        <img
-          className={styles.brandImg}
-          src={brandImgDetail.src}
-          alt={brandImgDetail.alt}
-        />
-      </div>
-    )
-  }
+  // for (let i = 0; i < 22; i++) {
+  //   brandImgs.push(
+  //     <div key={i}>
+  //       <img
+  //         className={styles.brandImg}
+  //         src={brandImgDetail.src}
+  //         alt={brandImgDetail.alt}
+  //       />
+  //     </div>
+  //   )
+  // }
+
+  useEffect(() => {
+    axios
+      .get(brandLogoURI)
+      .then((response) => {
+        const logos = response.data['results'].map((brandLogo) => {
+          return {
+            brand: brandLogo.name,
+            src: brandLogo.logo ?? imageDefault,
+            alt: `Logo image of ${brandLogo.name}`,
+          }
+        })
+        setBrandLogos(logos)
+      })
+      .catch((error) => console.log(error))
+  }, [])
 
   useEffect(() => {
     if (hash === '') {
@@ -41,6 +60,18 @@ export default function Home() {
       }, 0)
     }
   }, [pathname, hash, key])
+
+  const brandLogoImages = useMemo(() => {
+    return brandLogos.map((brandLogo) => (
+      <div key={brandLogo.brand}>
+        <img
+          className={styles.brandImg}
+          src={brandLogo.src}
+          alt={brandLogo.alt}
+        />
+      </div>
+    ))
+  }, [brandLogos])
 
   return (
     <>
@@ -68,7 +99,7 @@ export default function Home() {
         <h1 className={styles.heading}>
           LTXP database covers a wide range of famous brands.
         </h1>
-        <div className={styles.brands}>{brandImgs}</div>
+        <div className={styles.brands}>{brandLogoImages}</div>
       </div>
       <div className={styles.container}>
         <h1 id="contact" className={styles.heading}>

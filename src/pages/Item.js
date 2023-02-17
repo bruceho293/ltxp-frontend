@@ -29,14 +29,14 @@ export default function Item() {
   const [matchingSpecsTotalPrice, setMatchingSpecsTotalPrice] = useState(0)
   const [priceDifferenceSign, setPriceDifferenceSign] = useState('+')
 
-  const laptopDetailURL = host + 'api/laptops/' + slug
-  const laptopMatchingSpecsURL = laptopDetailURL + '/get-matching-components/'
+  const laptopDetailURI = host + 'api/laptops/' + slug
+  const laptopMatchingSpecsURI = laptopDetailURI + '/get-matching-components/'
   const navigate = useNavigate()
 
   const loadLaptopDetail = () => {
     return axios
-      .get(laptopDetailURL)
-      .then(response => {
+      .get(laptopDetailURI)
+      .then((response) => {
         const currentLaptop = response.data
         if (Number(currentLaptop.price_difference) < 0) {
           setPriceDifferenceSign('-')
@@ -46,37 +46,37 @@ export default function Item() {
         // Get all the components in a category
         let initSpecs = {
           cpu: apiSpecs.filter(
-            component => component.category === COMPONENT_TYPE_API.cpu
+            (component) => component.category === COMPONENT_TYPE_API.cpu
           ),
           gpu: apiSpecs.filter(
-            component => component.category === COMPONENT_TYPE_API.gpu
+            (component) => component.category === COMPONENT_TYPE_API.gpu
           ),
           ram: apiSpecs.filter(
-            component => component.category === COMPONENT_TYPE_API.ram
+            (component) => component.category === COMPONENT_TYPE_API.ram
           ),
           storage: apiSpecs.filter(
-            component => component.category === COMPONENT_TYPE_API.storage
+            (component) => component.category === COMPONENT_TYPE_API.storage
           ),
         }
 
         initSpecs = {
           cpu: initSpecs.cpu
-            .map(component => component.name)
+            .map((component) => component.name)
             .toString()
             .split(',')
             .join(', '),
           gpu: initSpecs.gpu
-            .map(component => component.name)
+            .map((component) => component.name)
             .toString()
             .split(',')
             .join(', '),
           ram: initSpecs.ram
-            .map(component => component.name)
+            .map((component) => component.name)
             .toString()
             .split(',')
             .join(', '),
           storage: initSpecs.storage
-            .map(component => component.name)
+            .map((component) => component.name)
             .toString()
             .split(',')
             .join(', '),
@@ -85,32 +85,32 @@ export default function Item() {
         setSpecs(initSpecs)
         setLaptop(currentLaptop)
       })
-      .catch(error => console.log(error))
+      .catch((error) => console.log(error))
   }
 
   const loadLaptopMatchingSpecs = () => {
     return axios
-      .get(laptopMatchingSpecsURL)
-      .then(response => {
+      .get(laptopMatchingSpecsURI)
+      .then((response) => {
         const data = response.data
         const matchingSpecs = {
           cpu: data.filter(
-            component => component.category === COMPONENT_TYPE_API.cpu
+            (component) => component.category === COMPONENT_TYPE_API.cpu
           ),
           gpu: data.filter(
-            component => component.category === COMPONENT_TYPE_API.gpu
+            (component) => component.category === COMPONENT_TYPE_API.gpu
           ),
           ram: data.filter(
-            component => component.category === COMPONENT_TYPE_API.ram
+            (component) => component.category === COMPONENT_TYPE_API.ram
           ),
           storage: data.filter(
-            component => component.category === COMPONENT_TYPE_API.storage
+            (component) => component.category === COMPONENT_TYPE_API.storage
           ),
         }
         let totalAllPrice = 0
-        Object.keys(matchingSpecs).forEach(spec =>
+        Object.keys(matchingSpecs).forEach((spec) =>
           matchingSpecs[spec].forEach(
-            component =>
+            (component) =>
               (totalAllPrice = totalAllPrice + Number(component.total_price))
           )
         )
@@ -119,10 +119,10 @@ export default function Item() {
         setMatchingSpecsTotalPrice(totalAllPrice)
         setMatchingSpecs(matchingSpecs)
       })
-      .catch(error => console.log(error))
+      .catch((error) => console.log(error))
   }
 
-  const handleClickToSource = sourceLink => {
+  const handleClickToSource = (sourceLink) => {
     console.log(`SouceLink: ${laptop}`)
     window.location.assign(sourceLink)
   }
@@ -248,7 +248,7 @@ export default function Item() {
 
 const LaptopComponent = ({ components, label }) => {
   const defaultValueDisplay = <div className={styles.detail}>Unavailable</div>
-  const componentsDisplay = components?.map(component => {
+  const componentsDisplay = components?.map((component) => {
     return (
       <div className={styles.subcard} key={component.name}>
         <div className={styles.detail}>
