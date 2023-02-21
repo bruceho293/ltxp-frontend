@@ -1,5 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export const AuthContext = createContext()
 
@@ -13,6 +14,7 @@ export default function AuthProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(null)
 
   const serverHost = process.env.REACT_APP_HOST
+  const navigate = useNavigate()
 
   useEffect(function getSavedTokens() {
     let accessTok = localStorage.getItem('access_token')
@@ -54,14 +56,16 @@ export default function AuthProvider({ children }) {
 
     axios
       .post(url, data, authConfig)
-      .then(response => {
+      .then((response) => {
         let data = response.data
         setAccessToken(data.accessToken)
         setRefreshToken(data.refreshToken)
+        setUsername(username)
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
+    navigate(-1)
   }
 
   const logout = () => {
@@ -78,13 +82,15 @@ export default function AuthProvider({ children }) {
 
     axios
       .post(url, data, authConfig)
-      .then(response => {
+      .then((response) => {
         setAccessToken(null)
         setRefreshToken(null)
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
+
+    navigate('/')
   }
 
   const value = {

@@ -33,7 +33,7 @@ export default function Profile() {
     }
   }, [isAvatarEditor])
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     e.preventDefault()
     setNewImgSrc(e.target.files[0])
   }
@@ -44,7 +44,7 @@ export default function Profile() {
     setNewImgSrc('')
   }
 
-  const handleScaleChange = e => {
+  const handleScaleChange = (e) => {
     const newScale = e.target.value
     setAvatarScale(newScale)
   }
@@ -104,9 +104,6 @@ export default function Profile() {
             <label htmlFor="email">Email</label>
             <p>:</p>
             <input type="email" id="email" name="email" />
-            <label htmlFor="password">Password</label>
-            <p>:</p>
-            <input type="password" id="password" name="password" />
             <button type="submit">Save</button>
           </form>
         </div>

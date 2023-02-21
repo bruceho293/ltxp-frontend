@@ -59,7 +59,7 @@ export const useItemList = ({ isProfile }) => {
     const firstPageIndex = (currentPage - 1) * PAGE_SIZE
     const lastPageIndex = firstPageIndex + PAGE_SIZE
     return laptops.slice(firstPageIndex, lastPageIndex)
-  }, [currentPage, laptops])
+  }, [currentPage, laptops, searches, filters])
 
   // Get the saved search terms and fitlter options when component mounted
   useEffect(() => {
@@ -67,7 +67,7 @@ export const useItemList = ({ isProfile }) => {
     if (searchesString != null) setSearches(JSON.parse(searchesString))
 
     let savedFilters = [...filters]
-    savedFilters.forEach(filter => {
+    savedFilters.forEach((filter) => {
       const savedValue = GetFilterOptionFromStorage(filter.label)
       let value = ASC_VALUE
       if (savedValue == null) return
@@ -80,22 +80,22 @@ export const useItemList = ({ isProfile }) => {
   // Update the data based on search terms and filter options
   useEffect(() => {
     const searchRegexes = searches.map(
-      result => new RegExp(CreateRegexFromString(result))
+      (result) => new RegExp(CreateRegexFromString(result))
     )
 
     let data = null
     const host = process.env.REACT_APP_HOST
     axios
       .get(host + 'api/laptops/')
-      .then(response => {
+      .then((response) => {
         data = response.data
       })
       .then(() => {
-        let interestData = data.filter(laptop => laptop.imp !== 0)
+        let interestData = data.filter((laptop) => laptop.imp !== 0)
         let currentData = isProfile ? interestData : data
 
-        const searchData = currentData.filter(laptop =>
-          searchRegexes.some(regex =>
+        const searchData = currentData.filter((laptop) =>
+          searchRegexes.some((regex) =>
             regex.test(laptop.name.trim().toLowerCase())
           )
         )
@@ -103,7 +103,7 @@ export const useItemList = ({ isProfile }) => {
         let finalData = searchData
 
         let activeFilters = []
-        filters.forEach(filter => {
+        filters.forEach((filter) => {
           if (filter.active) activeFilters.push(filter)
         })
 
@@ -111,14 +111,14 @@ export const useItemList = ({ isProfile }) => {
           finalData = sortHelper(finalData, activeFilters)
         setLaptops(finalData)
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error)
       })
   }, [searches, filters])
 
   const updateLaptopImp = (laptopSlug, buttonPressed) => {
     setLaptops(() => {
-      const laptop = laptops.find(laptop => laptop.slug === laptopSlug)
+      const laptop = laptops.find((laptop) => laptop.slug === laptopSlug)
       const index = laptops.indexOf(laptop)
       const currentImp = laptop.imp
       const targetImp = buttonPressed
@@ -152,7 +152,7 @@ export const useItemList = ({ isProfile }) => {
     })
   }
 
-  const addSearchResult = result => {
+  const addSearchResult = (result) => {
     const resultLower = result.toLowerCase()
     if (!searches.includes(resultLower)) {
       setSearches(searches.concat(resultLower))
@@ -160,7 +160,7 @@ export const useItemList = ({ isProfile }) => {
     }
   }
 
-  const deleteSearchResult = result => {
+  const deleteSearchResult = (result) => {
     const resultLower = result.toLowerCase()
     const temps = [...searches]
     const index = temps.indexOf(resultLower)
@@ -171,9 +171,9 @@ export const useItemList = ({ isProfile }) => {
     }
   }
 
-  const addFilter = event => {
+  const addFilter = (event) => {
     const { value, fid } = event.target.dataset
-    const index = filters.findIndex(filter => filter.fid === Number(fid))
+    const index = filters.findIndex((filter) => filter.fid === Number(fid))
     const label = filters[index].label
     const newFilters = [...filters]
 
@@ -192,8 +192,8 @@ export const useItemList = ({ isProfile }) => {
     setFilters(newFilters)
   }
 
-  const deleteFilter = fid => {
-    const index = filters.findIndex(filter => filter.fid === Number(fid))
+  const deleteFilter = (fid) => {
+    const index = filters.findIndex((filter) => filter.fid === Number(fid))
     const label = filters[index].label
     const newFilters = [...filters]
 
