@@ -5,11 +5,11 @@ import classnames from 'classnames'
 import { AuthContext } from '../contexts/AuthProvider'
 
 export default function Login() {
-  const { login } = useContext(AuthContext)
+  const { login, error } = useContext(AuthContext)
   const usernameRef = useRef()
   const passwordRef = useRef()
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const username = usernameRef.current.value
     const password = passwordRef.current.value
@@ -20,6 +20,7 @@ export default function Login() {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <p className={styles.title}>LOGIN</p>
+      {error && <div className={styles.errors}>{error}</div>}
       <label htmlFor="username">Username</label>
       <input
         type="text"

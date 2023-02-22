@@ -8,6 +8,7 @@ export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [username, setUsername] = useState(null)
   const [userImpression, setUserImpression] = useState(null)
+  const [error, setError] = useState(null)
 
   // Temporary store the tokens in localStorage.
   const [accessToken, setAccessToken] = useState(null)
@@ -45,7 +46,6 @@ export default function AuthProvider({ children }) {
     /*
     Create a login request to the backend with Oauth2 Django.
     */
-    setIsAuthenticated(true)
 
     const url = serverHost + '/user/token/'
     const data = new FormData()
@@ -61,11 +61,14 @@ export default function AuthProvider({ children }) {
         setAccessToken(data.accessToken)
         setRefreshToken(data.refreshToken)
         setUsername(username)
+        setIsAuthenticated(true)
+        setError(null)
+        navigate(-1)
       })
       .catch(function (error) {
-        console.log(error)
+        console.log(error.response)
+        setError(error.response.error)
       })
-    navigate(-1)
   }
 
   const logout = () => {
@@ -97,6 +100,7 @@ export default function AuthProvider({ children }) {
     isAuthenticated,
     username,
     userImpression,
+    error,
     login,
     logout,
   }

@@ -53,3 +53,7 @@
   color: var(--color-txt-default);
   text-align: center;
 }
+
+.errors {
+  font-style: italic;
+}
