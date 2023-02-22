@@ -20,7 +20,7 @@ export default function Login() {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <p className={styles.title}>LOGIN</p>
-      {error && <div className={styles.errors}>{error}</div>}
+      {error && <p className={styles.errors}>{error}</p>}
       <label htmlFor="username">Username</label>
       <input
         type="text"
