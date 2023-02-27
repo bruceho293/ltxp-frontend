@@ -1,5 +1,5 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
 import GeneralLayout from './layouts/GeneralLayout'
@@ -10,9 +10,10 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Item from './pages/Item'
 import Profile from './pages/Profile'
-import AuthProvider from './contexts/AuthProvider'
+import AuthProvider, { AuthContext } from './contexts/AuthProvider'
 
 function App() {
+  const value = useContext(AuthContext)
   return (
     <AuthProvider>
       <GeneralLayout>
@@ -23,7 +24,17 @@ function App() {
           <Route path="/#contact" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            exact
+            path="/profile"
+            element={
+              value?.isAuthenticated !== undefined ? (
+                <Profile />
+              ) : (
+                <Navigate replace to={'/login'} />
+              )
+            }
+          />
           <Route path="/laptop/:slug" element={<Item />} />
           <Route
             path="*"
