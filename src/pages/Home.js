@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import styles from './Home.module.css'
 import laptopSpecsSrc from '../assets/images/laptopspec.svg'
-import imageDefault from '../assets/images/image_default.svg'
+// import imageDefault from '../assets/images/image_default.svg'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import classnames from 'classnames'
@@ -37,10 +37,10 @@ export default function Home() {
     axios
       .get(brandLogoURI)
       .then((response) => {
-        const logos = response.data['results'].map((brandLogo) => {
+        const logos = response.data.map((brandLogo) => {
           return {
             brand: brandLogo.name,
-            src: brandLogo.logo ?? imageDefault,
+            src: brandLogo.logo,
             alt: `Logo image of ${brandLogo.name}`,
           }
         })
@@ -62,7 +62,11 @@ export default function Home() {
   }, [pathname, hash, key])
 
   const brandLogoImages = useMemo(() => {
-    return brandLogos.map((brandLogo) => (
+    const brandLogosExists = brandLogos.filter(
+      (brandLogo) => brandLogo.src !== null
+    )
+
+    return brandLogosExists.map((brandLogo) => (
       <div key={brandLogo.brand}>
         <img
           className={styles.brandImg}
@@ -99,7 +103,12 @@ export default function Home() {
         <h1 className={styles.heading}>
           LTXP database covers a wide range of famous brands.
         </h1>
-        <div className={styles.brands}>{brandLogoImages}</div>
+        <div className={styles.brands_container}>
+          <div className={styles.brands_list}>{brandLogoImages}</div>
+          <div className={styles.brands_list} aria-hidden="True">
+            {brandLogoImages}
+          </div>
+        </div>
       </div>
       <div className={styles.container}>
         <h1 id="contact" className={styles.heading}>
