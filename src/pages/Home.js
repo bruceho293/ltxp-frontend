@@ -67,13 +67,12 @@ export default function Home() {
     )
 
     return brandLogosExists.map((brandLogo) => (
-      <div key={brandLogo.brand}>
-        <img
-          className={styles.brandImg}
-          src={brandLogo.src}
-          alt={brandLogo.alt}
-        />
-      </div>
+      <img
+        key={brandLogo.brand}
+        className={styles.brandImg}
+        src={brandLogo.src}
+        alt={brandLogo.alt}
+      />
     ))
   }, [brandLogos])
 
