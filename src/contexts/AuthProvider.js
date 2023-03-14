@@ -15,6 +15,7 @@ export default function AuthProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(null)
 
   const serverHost = process.env.REACT_APP_HOST
+  var data = new FormData()
   const navigate = useNavigate()
 
   useEffect(function getSavedTokens() {
@@ -42,13 +43,17 @@ export default function AuthProvider({ children }) {
     },
   }
 
+  const resetFormData = () => {
+    data.keys().forEach((key) => data.delete(key))
+  }
+
   const login = (username, password) => {
     /*
     Create a login request to the backend with Oauth2 Django.
     */
 
     const url = serverHost + '/user/token/'
-    const data = new FormData()
+    resetFormData()
     data.append('username', username)
     data.append('password', password)
     data.append('grant_type', 'password')
@@ -66,7 +71,7 @@ export default function AuthProvider({ children }) {
         navigate(-1)
       })
       .catch(function (error) {
-        console.log(error.response)
+        // console.log(error.response)
         setError(error.response.error)
       })
   }
@@ -78,22 +83,38 @@ export default function AuthProvider({ children }) {
     setIsAuthenticated(false)
 
     const url = serverHost + '/user/revoke_token/'
-    const data = new FormData()
     let refreshTok = refreshToken
+    resetFormData()
     data.append('token', refreshTok)
     data.append('client_id', process.env.REACT_APP_OAUTH2_CLIENT_ID)
 
     axios
       .post(url, data, authConfig)
-      .then((response) => {
+      .then(() => {
         setAccessToken(null)
         setRefreshToken(null)
       })
       .catch(function (error) {
-        console.log(error)
+        // console.log(error)
+        setError(error.response.error)
       })
 
     navigate('/')
+  }
+
+  const resetPassword = (newPassword, retypeNewPassword) => {
+    if (newPassword === retypeNewPassword) {
+      setError('Unmatched password')
+      return
+    }
+
+    const url = serverHost + '/api/password_reset'
+
+    resetFormData()
+    data.append('new-password', newPassword)
+    data.append('retype-new-password', retypeNewPassword)
+
+    axios.post(url, data, authConfig).then(() => {})
   }
 
   const value = {
@@ -103,6 +124,7 @@ export default function AuthProvider({ children }) {
     error,
     login,
     logout,
+    resetPassword,
   }
 
   return (

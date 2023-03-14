@@ -47,7 +47,7 @@ export default function Login() {
       <button className={styles.btn} type="submit" value="submit">
         LOGIN
       </button>
-      <a className={styles.btnLink} href="/">
+      <a className={styles.btnLink} href="/password-reset">
         Forget Password?
       </a>
       <p className={classnames(styles.group, styles.groupCenter)}>

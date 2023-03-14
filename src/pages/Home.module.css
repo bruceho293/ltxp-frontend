@@ -16,7 +16,7 @@
   align-items: center;
   gap: var(--gap);
   animation-name: marquee;
-  animation-duration: 10s;
+  animation-duration: 60s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-direction: reverse;

@@ -11,6 +11,7 @@ import Signup from './pages/Signup'
 import Item from './pages/Item'
 import Profile from './pages/Profile'
 import AuthProvider, { AuthContext } from './contexts/AuthProvider'
+import PasswordReset from './pages/PasswordReset'
 
 function App() {
   const value = useContext(AuthContext)
@@ -36,6 +37,7 @@ function App() {
             }
           />
           <Route path="/laptop/:slug" element={<Item />} />
+          <Route path="/password-reset" element={<PasswordReset />} />
           <Route
             path="*"
             element={
