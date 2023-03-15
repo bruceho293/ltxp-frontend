@@ -16,8 +16,7 @@ export default function Header() {
     setIsToggled(false)
   }, [location])
 
-  const { isAuthenticated } = useContext(AuthContext)
-  const username = 'BRUCE'
+  const { isAuthenticated, username } = useContext(AuthContext)
 
   return (
     <header className={styles.header}>

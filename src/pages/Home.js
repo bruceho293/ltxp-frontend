@@ -11,7 +11,7 @@ export default function Home() {
   const { pathname, hash, key } = useLocation()
   const [brandLogos, setBrandLogos] = useState([])
   const host = process.env.REACT_APP_HOST
-  const brandLogoURI = host + 'api/brands/'
+  const brandLogoURI = host + '/api/brands/'
   const navigate = useNavigate()
 
   // Mock data

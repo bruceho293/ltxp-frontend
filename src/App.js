@@ -11,7 +11,8 @@ import Signup from './pages/Signup'
 import Item from './pages/Item'
 import Profile from './pages/Profile'
 import AuthProvider, { AuthContext } from './contexts/AuthProvider'
-import PasswordReset from './pages/PasswordReset'
+import PasswordReset from './components/PasswordReset'
+import PasswordCheckmark from './components/PasswordCheckmark'
 
 function App() {
   const value = useContext(AuthContext)
@@ -37,7 +38,21 @@ function App() {
             }
           />
           <Route path="/laptop/:slug" element={<Item />} />
-          <Route path="/password-reset" element={<PasswordReset />} />
+          <Route
+            exact
+            path="/password-reset"
+            element={
+              value?.passwordResetChecked !== undefined ? (
+                <PasswordReset />
+              ) : (
+                <Navigate replace to={'/password-reset-checkmark'} />
+              )
+            }
+          />
+          <Route
+            path="/password-reset-checkmark"
+            element={<PasswordCheckmark />}
+          />
           <Route
             path="*"
             element={

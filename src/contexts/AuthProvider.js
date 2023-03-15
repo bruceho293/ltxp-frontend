@@ -6,6 +6,7 @@ export const AuthContext = createContext()
 
 export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [passwordResetChecked, setPasswordResetChecked] = useState(false)
   const [username, setUsername] = useState(null)
   const [userImpression, setUserImpression] = useState(null)
   const [error, setError] = useState(null)
@@ -15,26 +16,26 @@ export default function AuthProvider({ children }) {
   const [refreshToken, setRefreshToken] = useState(null)
 
   const serverHost = process.env.REACT_APP_HOST
-  var data = new FormData()
   const navigate = useNavigate()
 
   useEffect(function getSavedTokens() {
     let accessTok = localStorage.getItem('access_token')
     let refreshTok = localStorage.getItem('refresh_token')
-    if (accessTok != null) setAccessToken(accessTok)
-    if (refreshTok != null) setRefreshToken(refreshTok)
+    if (accessTok != null && accessTok !== undefined) setAccessToken(accessTok)
+    if (refreshTok != null && refreshTok !== undefined)
+      setRefreshToken(refreshTok)
   }, [])
 
   useEffect(
     function saveTokens() {
-      if (refreshToken == null) {
+      if (refreshToken == null && !isAuthenticated) {
         localStorage.clear()
       } else {
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
       }
     },
-    [accessToken, refreshToken]
+    [accessToken, refreshToken, isAuthenticated]
   )
 
   const authConfig = {
@@ -43,17 +44,13 @@ export default function AuthProvider({ children }) {
     },
   }
 
-  const resetFormData = () => {
-    data.keys().forEach((key) => data.delete(key))
-  }
-
   const login = (username, password) => {
     /*
     Create a login request to the backend with Oauth2 Django.
     */
 
-    const url = serverHost + '/user/token/'
-    resetFormData()
+    const url = serverHost + '/api/user/token/'
+    const data = new FormData()
     data.append('username', username)
     data.append('password', password)
     data.append('grant_type', 'password')
@@ -63,6 +60,7 @@ export default function AuthProvider({ children }) {
       .post(url, data, authConfig)
       .then((response) => {
         let data = response.data
+        console.log(data)
         setAccessToken(data.accessToken)
         setRefreshToken(data.refreshToken)
         setUsername(username)
@@ -72,7 +70,7 @@ export default function AuthProvider({ children }) {
       })
       .catch(function (error) {
         // console.log(error.response)
-        setError(error.response.error)
+        setError(error.response.data.error)
       })
   }
 
@@ -82,9 +80,9 @@ export default function AuthProvider({ children }) {
     */
     setIsAuthenticated(false)
 
-    const url = serverHost + '/user/revoke_token/'
+    const url = serverHost + '/api/user/revoke_token/'
     let refreshTok = refreshToken
-    resetFormData()
+    const data = new FormData()
     data.append('token', refreshTok)
     data.append('client_id', process.env.REACT_APP_OAUTH2_CLIENT_ID)
 
@@ -110,11 +108,29 @@ export default function AuthProvider({ children }) {
 
     const url = serverHost + '/api/password_reset'
 
-    resetFormData()
+    const data = new FormData()
     data.append('new-password', newPassword)
     data.append('retype-new-password', retypeNewPassword)
 
     axios.post(url, data, authConfig).then(() => {})
+  }
+
+  const checkEmailOrCurrentPassword = (isEmailElseCurrentPassword, info) => {
+    const emailURL = serverHost + '/api/check-email'
+    const currentPasswordURL = serverHost + '/api/check-password'
+
+    const url = isEmailElseCurrentPassword ? emailURL : currentPasswordURL
+
+    const data = new FormData()
+    data.append('information', info)
+    setPasswordResetChecked(false)
+    axios
+      .post(url, data, authConfig)
+      .then(() => {
+        setPasswordResetChecked(true)
+        navigate('/password-reset')
+      })
+      .catch((error) => setError(error.response.error))
   }
 
   const value = {
@@ -125,6 +141,7 @@ export default function AuthProvider({ children }) {
     login,
     logout,
     resetPassword,
+    checkEmailOrCurrentPassword,
   }
 
   return (
