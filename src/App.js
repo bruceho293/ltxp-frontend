@@ -10,12 +10,12 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Item from './pages/Item'
 import Profile from './pages/Profile'
-import AuthProvider, { AuthContext } from './contexts/AuthProvider'
+import AuthProvider from './contexts/AuthProvider'
 import PasswordReset from './components/PasswordReset'
 import PasswordCheckmark from './components/PasswordCheckmark'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
-  const value = useContext(AuthContext)
   return (
     <AuthProvider>
       <GeneralLayout>
@@ -27,26 +27,20 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route
-            exact
             path="/profile"
             element={
-              value?.isAuthenticated !== undefined ? (
+              <ProtectedRoute redirectPath={'/login'}>
                 <Profile />
-              ) : (
-                <Navigate replace to={'/login'} />
-              )
+              </ProtectedRoute>
             }
           />
           <Route path="/laptop/:slug" element={<Item />} />
           <Route
-            exact
             path="/password-reset"
             element={
-              value?.passwordResetChecked !== undefined ? (
+              <ProtectedRoute redirectPath={'/password-reset-checkmark'}>
                 <PasswordReset />
-              ) : (
-                <Navigate replace to={'/password-reset-checkmark'} />
-              )
+              </ProtectedRoute>
             }
           />
           <Route

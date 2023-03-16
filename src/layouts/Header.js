@@ -17,7 +17,6 @@ export default function Header() {
   }, [location])
 
   const { isAuthenticated, username } = useContext(AuthContext)
-
   return (
     <header className={styles.header}>
       <nav className={styles.navbar}>

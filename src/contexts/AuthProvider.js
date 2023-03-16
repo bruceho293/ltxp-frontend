@@ -5,15 +5,21 @@ import { useNavigate } from 'react-router-dom'
 export const AuthContext = createContext()
 
 export default function AuthProvider({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem('isLoggedIn') ?? false
+  )
   const [passwordResetChecked, setPasswordResetChecked] = useState(false)
   const [username, setUsername] = useState(null)
   const [userImpression, setUserImpression] = useState(null)
   const [error, setError] = useState(null)
 
   // Temporary store the tokens in localStorage.
-  const [accessToken, setAccessToken] = useState(null)
-  const [refreshToken, setRefreshToken] = useState(null)
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem('access_token') ?? null
+  )
+  const [refreshToken, setRefreshToken] = useState(
+    localStorage.getItem('refresh_token') ?? null
+  )
 
   const serverHost = process.env.REACT_APP_HOST
   const navigate = useNavigate()
@@ -21,21 +27,33 @@ export default function AuthProvider({ children }) {
   useEffect(function getSavedTokens() {
     let accessTok = localStorage.getItem('access_token')
     let refreshTok = localStorage.getItem('refresh_token')
-    if (accessTok != null && accessTok !== undefined) setAccessToken(accessTok)
-    if (refreshTok != null && refreshTok !== undefined)
+    const loggedIn = accessTok != null && refreshTok != null
+    const undefinedTokens = accessTok === undefined || refreshTok === undefined
+
+    if (undefinedTokens) {
+      localStorage.clear()
+      return
+    }
+
+    if (loggedIn) {
+      setAccessToken(accessTok)
       setRefreshToken(refreshTok)
+      setIsAuthenticated(true)
+    }
   }, [])
 
   useEffect(
     function saveTokens() {
-      if (refreshToken == null && !isAuthenticated) {
+      if (refreshToken == null) {
         localStorage.clear()
+        setIsAuthenticated(false)
       } else {
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
+        localStorage.setItem('isLoggedin', true)
       }
     },
-    [accessToken, refreshToken, isAuthenticated]
+    [accessToken, refreshToken]
   )
 
   const authConfig = {
@@ -61,10 +79,10 @@ export default function AuthProvider({ children }) {
       .then((response) => {
         let data = response.data
         console.log(data)
-        setAccessToken(data.accessToken)
-        setRefreshToken(data.refreshToken)
-        setUsername(username)
         setIsAuthenticated(true)
+        setAccessToken(data.access_token)
+        setRefreshToken(data.refresh_token)
+        setUsername(username)
         setError(null)
         navigate(-1)
       })
@@ -78,7 +96,6 @@ export default function AuthProvider({ children }) {
     /*
     Create a logout reqeust to the backend with OAuth2 Django.
     */
-    setIsAuthenticated(false)
 
     const url = serverHost + '/api/user/revoke_token/'
     let refreshTok = refreshToken
@@ -89,12 +106,12 @@ export default function AuthProvider({ children }) {
     axios
       .post(url, data, authConfig)
       .then(() => {
+        setIsAuthenticated(false)
         setAccessToken(null)
         setRefreshToken(null)
       })
       .catch(function (error) {
-        // console.log(error)
-        setError(error.response.error)
+        setError(error.response.data.error)
       })
 
     navigate('/')
@@ -106,7 +123,7 @@ export default function AuthProvider({ children }) {
       return
     }
 
-    const url = serverHost + '/api/password_reset'
+    const url = serverHost + '/api/password-reset'
 
     const data = new FormData()
     data.append('new-password', newPassword)
@@ -144,9 +161,5 @@ export default function AuthProvider({ children }) {
     checkEmailOrCurrentPassword,
   }
 
-  return (
-    <>
-      <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    </>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
