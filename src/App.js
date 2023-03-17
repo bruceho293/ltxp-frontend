@@ -13,7 +13,7 @@ import Profile from './pages/Profile'
 import AuthProvider from './contexts/AuthProvider'
 import PasswordReset from './components/PasswordReset'
 import PasswordCheckmark from './components/PasswordCheckmark'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedResource from './components/ProtectedResource'
 
 function App() {
   return (
@@ -29,18 +29,18 @@ function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute redirectPath={'/login'}>
+              <ProtectedResource redirectPath={'/login'}>
                 <Profile />
-              </ProtectedRoute>
+              </ProtectedResource>
             }
           />
           <Route path="/laptop/:slug" element={<Item />} />
           <Route
             path="/password-reset"
             element={
-              <ProtectedRoute redirectPath={'/password-reset-checkmark'}>
+              <ProtectedResource redirectPath={'/password-reset-checkmark'}>
                 <PasswordReset />
-              </ProtectedRoute>
+              </ProtectedResource>
             }
           />
           <Route
