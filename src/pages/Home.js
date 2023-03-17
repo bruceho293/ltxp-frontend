@@ -14,25 +14,6 @@ export default function Home() {
   const brandLogoURI = host + '/api/brands/'
   const navigate = useNavigate()
 
-  // Mock data
-  // const brandImgDetail = {
-  //   brand: 'Default Brand',
-  //   src: imageDefault,
-  //   alt: 'Logo of a brand.',
-  // }
-
-  // for (let i = 0; i < 22; i++) {
-  //   brandImgs.push(
-  //     <div key={i}>
-  //       <img
-  //         className={styles.brandImg}
-  //         src={brandImgDetail.src}
-  //         alt={brandImgDetail.alt}
-  //       />
-  //     </div>
-  //   )
-  // }
-
   useEffect(() => {
     axios
       .get(brandLogoURI)

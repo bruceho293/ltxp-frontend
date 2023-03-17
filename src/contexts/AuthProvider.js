@@ -50,7 +50,7 @@ export default function AuthProvider({ children }) {
       } else {
         localStorage.setItem('access_token', accessToken)
         localStorage.setItem('refresh_token', refreshToken)
-        localStorage.setItem('isLoggedin', true)
+        localStorage.setItem('isLoggedIn', true)
       }
     },
     [accessToken, refreshToken]

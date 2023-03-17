@@ -5,11 +5,12 @@ import { AuthContext } from '../contexts/AuthProvider'
 export default function ProtectedResource({ redirectPath, children }) {
   const { isAuthenticated, passwordResetChecked } = useContext(AuthContext)
 
-  if (
-    (redirectPath !== '/login' && !passwordResetChecked) ||
-    (redirectPath === '/login' && !isAuthenticated)
-  )
-    return <Navigate to={redirectPath} replace />
+  console.log(isAuthenticated)
+  console.log(localStorage.getItem('isLoggedIn'))
+  const condNotMeet =
+    redirectPath === '/login' ? !isAuthenticated : !passwordResetChecked
+
+  if (condNotMeet) return <Navigate to={redirectPath} replace />
 
   return children
 }

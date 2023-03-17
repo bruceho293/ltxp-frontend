@@ -105,6 +105,7 @@ export default function Profile() {
             <p>:</p>
             <input type="email" id="email" name="email" />
             <button type="submit">Save</button>
+            <a href="/password-reset">Reset Password</a>
           </form>
         </div>
       </div>
