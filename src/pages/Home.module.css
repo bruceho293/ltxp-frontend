@@ -101,7 +101,7 @@
   margin-top: 5px;
   padding-top: 25px;
   padding-left: 10px;
-  min-height: 300px;
+  min-height: 200px;
 }
 
 .contact button {
@@ -178,7 +178,7 @@
 }
 
 .halfWidth {
-  width: 49%;
+  width: calc(49% - 0.125rem);
 }
 
 @keyframes marquee {
